@@ -1,0 +1,17 @@
+<h3>{{numrows}} Records Found</h3>
+<table class="table table-striped custab">
+  <thead>
+      <tr>
+         <th>Name</th>
+         <th>Position</th>
+         <th>Office</th>
+      </tr>
+  </thead>
+  </table>
+{% for row in employee %}
+   <tr>
+    <td>{{row.name}}</td>
+    <td>{{row.position}}</td>
+    <td>{{row.office}}</td>
+   </tr>
+{% endfor %}
