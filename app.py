@@ -5,7 +5,7 @@ import psycopg2.extras
 app = Flask(__name__)
 
 DB_HOST = "localhost"
-DB_NAME = "postgres"
+DB_NAME = "tcc_db"
 DB_USER = "postgres"
 DB_PASS = "1989"
 
