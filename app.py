@@ -24,11 +24,22 @@ def ajaxlivesearch():
         search_word = request.form['query']
         print(search_word)
         if search_word == '':
-            query = "SELECT * from employee ORDER BY id"
+            query = "SELECT * from researcher ORDER BY id"
             cur.execute(query)
             employee = cur.fetchall()
         else:
-            cur.execute('SELECT * FROM employee WHERE name LIKE %(name)s', {'name': '%{}%'.format(search_word)})
+            cur.execute('''
+            SELECT id::uuid, name::varchar, citations::varchar, abstract::varchar,
+                   abstract_en::varchar, other_information::varchar, qtt_publications::int,
+                   ts_rank(search, websearch_to_tsquery('simple', %s)) +
+                   ts_rank(search, websearch_to_tsquery('english', %s)) AS rank
+            FROM researcher
+            WHERE search @@ websearch_to_tsquery('simple', %s) OR
+                  search @@ websearch_to_tsquery('english', %s)
+            ORDER BY rank DESC;
+            ''', (search_word, search_word, search_word, search_word))
+            #cur.execute('SELECT abstract FROM researcher WHERE search @@ websearch_to_tsquery(%s)', (search_word,))
+            #cur.execute('SELECT * FROM researcher WHERE name LIKE %s', ('%' + search_word + '%',))
             numrows = int(cur.rowcount)
             employee = cur.fetchall()
             print(numrows)
