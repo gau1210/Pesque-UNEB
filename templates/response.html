@@ -1,17 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
 <h3>{{numrows}} Encontrados</h3>
 <table class="table table-striped custab">
-  <thead>
-      <tr>
-         <th>Name</th>
-         <th>Abstract</th>
-      </tr>
-  </thead>
-  <tbody>
-  </tbody>
 {% for row in employee %}
    <tr>
-    <td>{{row.name}}</td>
-    <td>{{row.abstract}}</td>
+    <h1>{{row.name}}</h1>
+    <p>{{row.abstract}}</p>
    </tr>
 {% endfor %}
 </table>
+</body>
+</html>
+
