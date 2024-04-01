@@ -1,5 +1,6 @@
-body {
-  background-color: powderblue;
+table {
+    border: 0;
+    width: 100%;
 }
 .search-table{
     padding: 10%;

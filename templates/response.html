@@ -1,17 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Python Flask PostgreSQL</title>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
-<body>
+<body >
 <h3>{{numrows}} Encontrados</h3>
-<table class="table table-striped custab">
-{% for row in employee %}
-   <tr>
-    <h1>{{row.name}}</h1>
-    <p>{{row.abstract}}</p>
-   </tr>
-{% endfor %}
-</table>
-</body>
+<div class="container">
+   <br />
+   <h3 align="center"> Teste</h3>
+   <div class="row">
+    <div class="col-md-12">
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="60">Photo</th>
+                            <th>Name</th>
+                            <th>Abstract</th>
+                            <th>Detalhes</th>
+                        </tr>
+                        </thead>
+                        {% for row in employee %}
+                            <tr>
+                                <td><img src="/static/images/{{row.photo}}" height="50" width="50"/></td>
+                                <td>{{row.name}}</td>
+                                <td>{{row.abstract}}</td>
+                                <td><button data-id='{{row.id}}' class="userinfo btn btn-success">+</button></td>
+                            </tr>
+                        {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="modal fade" id="empModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">User Info</h4>
+                          <button type="button" class="close" data-dismiss="modal">×</button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </body>
 </html>
+
 
