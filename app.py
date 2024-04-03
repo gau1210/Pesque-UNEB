@@ -28,17 +28,18 @@ def ajaxlivesearch():
             cur.execute(query)
             employee = cur.fetchall()
         else:
-            cur.execute('''
-            SELECT id::uuid, name::varchar, citations::varchar, abstract::varchar,
-                   abstract_en::varchar, other_information::varchar, qtt_publications::int,
-                   ts_rank(search, websearch_to_tsquery('simple', %s)) +
-                   ts_rank(search, websearch_to_tsquery('english', %s)) AS rank
-            FROM researcher
-            WHERE search @@ websearch_to_tsquery('simple', %s) OR
-                  search @@ websearch_to_tsquery('english', %s)
-            ORDER BY rank DESC;
-            ''', (search_word, search_word, search_word, search_word))
-            #cur.execute('SELECT abstract FROM researcher WHERE search @@ websearch_to_tsquery(%s)', (search_word,))
+            search_word = search_word  # Substitua isso pela sua palavra de pesquisa real
+            cur.execute("""
+                                    SELECT name::varchar,
+                                           abstract::varchar,
+                                           ts_rank(document, websearch_to_tsquery('simple', %s)) +
+                                           ts_rank(document, websearch_to_tsquery('english', %s)) AS rank
+                                    FROM search_index 
+                                    WHERE document @@ websearch_to_tsquery('simple', %s) 
+                                       OR document @@ websearch_to_tsquery('english', %s)
+                                    ORDER BY rank DESC;
+                                    """, (search_word, search_word, search_word, search_word))
+            #cur.execute('SELECT abstract FROM search_index WHERE document @@ websearch_to_tsquery(%s)', (search_word,))
             #cur.execute('SELECT * FROM researcher WHERE name LIKE %s', ('%' + search_word + '%',))
             numrows = int(cur.rowcount)
             employee = cur.fetchall()
