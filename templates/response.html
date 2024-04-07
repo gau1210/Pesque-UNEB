@@ -18,8 +18,9 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th width="60">Photo</th>
-                            <th>Name</th>
+                            <th width="60">Foto</th>
+                            <th>Nome do Docente</th>
+                            <th>Programa Pós Graduação</th>
                             <th>Abstract</th>
                             <th>Detalhes</th>
                         </tr>
@@ -28,6 +29,7 @@
                             <tr>
                                 <td><img src="/static/images/{{row.photo}}" height="50" width="50"/></td>
                                 <td>{{row.name}}</td>
+                                <td>{{row.nome_programa}}</td>
                                 <td>{{row.abstract}}</td>
                                 <td><button data-id='{{row.id}}' class="userinfo btn btn-success">+</button></td>
                             </tr>

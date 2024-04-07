@@ -32,6 +32,7 @@ def ajaxlivesearch():
             cur.execute("""
                                     SELECT name::varchar,
                                            abstract::varchar,
+                                           nome_programa::varchar,
                                            ts_rank(document, websearch_to_tsquery('simple', %s)) +
                                            ts_rank(document, websearch_to_tsquery('english', %s)) AS rank
                                     FROM search_index 
