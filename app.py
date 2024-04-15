@@ -11,11 +11,9 @@ DB_PASS = "1989"
 
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route("/ajaxlivesearch", methods=["POST", "GET"])
 def ajaxlivesearch():
@@ -28,25 +26,20 @@ def ajaxlivesearch():
             cur.execute(query)
             employee = cur.fetchall()
         else:
-            search_word = search_word  # Substitua isso pela sua palavra de pesquisa real
             cur.execute("""
-                                    SELECT name::varchar,
-                                           abstract::varchar,
-                                           nome_programa::varchar,
-                                           ts_rank(document, websearch_to_tsquery('simple', %s)) +
-                                           ts_rank(document, websearch_to_tsquery('english', %s)) AS rank
-                                    FROM search_index 
-                                    WHERE document @@ websearch_to_tsquery('simple', %s) 
-                                       OR document @@ websearch_to_tsquery('english', %s)
-                                    ORDER BY rank DESC;
-                                    """, (search_word, search_word, search_word, search_word))
-            #cur.execute('SELECT abstract FROM search_index WHERE document @@ websearch_to_tsquery(%s)', (search_word,))
-            #cur.execute('SELECT * FROM researcher WHERE name LIKE %s', ('%' + search_word + '%',))
+                                               SELECT name::varchar,
+                                                      abstract::varchar,
+                                                      ts_rank(search, websearch_to_tsquery('simple', %s)) +
+                                                      ts_rank(search, phraseto_tsquery('simple', %s)) AS rank
+                                               FROM researcher
+                                               WHERE search @@ websearch_to_tsquery('simple', %s) 
+                                                  OR search @@ phraseto_tsquery('simple', %s)
+                                               ORDER BY rank DESC;
+                                               """, (search_word, search_word, search_word, search_word))
             numrows = int(cur.rowcount)
             employee = cur.fetchall()
             print(numrows)
     return jsonify({'htmlresponse': render_template('response.html', employee=employee, numrows=numrows)})
-
 
 if __name__ == "__main__":
     app.run(debug=True)

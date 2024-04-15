@@ -9,8 +9,7 @@
 <body >
 <h3>{{numrows}} Encontrados</h3>
 <div class="container">
-   <br />
-   <h3 align="center"> Teste</h3>
+   <br/>
    <div class="row">
     <div class="col-md-12">
         <div class="panel-body">
@@ -18,16 +17,16 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th width="60">Foto</th>
+                            <!--<th width="60">Foto</th>-->
                             <th>Nome do Docente</th>
                             <th>Programa Pós Graduação</th>
-                            <th>Abstract</th>
+                            <!--<th>Abstract</th>-->
                             <th>Detalhes</th>
                         </tr>
                         </thead>
                         {% for row in employee %}
                             <tr>
-                                <td><img src="/static/images/{{row.photo}}" height="50" width="50"/></td>
+                                <!--<td><img src="/static/images/{{row.photo}}" height="50" width="50"/></td>-->
                                 <td>{{row.name}}</td>
                                 <td>{{row.nome_programa}}</td>
                                 <td>{{row.abstract}}</td>
@@ -40,6 +39,8 @@
     </div>
     </div>
 </div>
+
+
 <div class="modal fade" id="empModal" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
