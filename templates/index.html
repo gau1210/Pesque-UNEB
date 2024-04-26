@@ -12,8 +12,7 @@
 $(function() {
   $(".search_button").click(function() {
       var search_word = $("#search_box").val();
-      var dataString = '
-      search_word='+ search_word;
+      var dataString = 'search_word='+ search_word;
       if(search_word==''){
       }else{
         $.ajax({
