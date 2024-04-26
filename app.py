@@ -4,8 +4,6 @@ import psycopg2.extras
 
 app = Flask(__name__)
 
-app.secret_key = "caircocoders-ednalan"
-
 DB_HOST = "localhost"
 DB_NAME = "tcc_db"
 DB_USER = "postgres"
