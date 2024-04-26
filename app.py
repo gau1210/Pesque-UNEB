@@ -39,17 +39,24 @@ def searchdata():
             print("lista de palvras buscada:", lista)
             return len(lista)
 
-        contaPalavras = contaPalavras(texto_limpo)
-        print("Qntd de palavras dig:", contaPalavras)
+        num_palavras = contaPalavras(texto_limpo)
+        print("Qntd de palavras dig:", num_palavras)
 
-        if contaPalavras >= 3:
+        if num_palavras >= 3:
+            termos = texto_limpo.split()
 
-            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
-            numrows = int(cur.rowcount)
-            employee = cur.fetchall()
-            print("Registros encontrados:", numrows)
-            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+            if len(termos) >= 2:
+                termo1 = termos[0]
+                termo2 = termos[1]
+
+                cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                cur.execute(
+                    "SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s || ' <-> ' || %s);",
+                    (termo1, termo2))
+                numrows = int(cur.rowcount)
+                employee = cur.fetchall()
+                print("Registros encontrados:", numrows)
+                return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
 
         else:
 
