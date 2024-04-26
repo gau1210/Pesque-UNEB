@@ -8,50 +8,55 @@
     <link href="/static/css/estilo.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script>
-$(document).ready(function(){
-  load_data();
-  function load_data(query)
-  {
-   $.ajax({
-    url:"/ajaxlivesearch",
-    method:"POST",
-    data:{query:query},
-    success:function(data)
-    {
-      $('#result').html(data);
-      $("#result").append(data.htmlresponse);
-    }
-   });
-  }
-  $('#search_text').keyup(function(){
-    var search = $(this).val();
-    if(search != ''){
-    load_data(search);
-   }else{
-    load_data();
-   }
+<script type="text/javascript">
+$(function() {
+  $(".search_button").click(function() {
+      var search_word = $("#search_box").val();
+      var dataString = '
+      search_word='+ search_word;
+      if(search_word==''){
+      }else{
+        $.ajax({
+          type: "POST",
+          url: "/searchdata",
+          data: dataString,
+          cache: false,
+          beforeSend: function(html) {
+              document.getElementById("insert_search").innerHTML = '';
+              $("#flash").show();
+              $("#searchword").show();
+              $(".searchword").html(search_word);
+              $("#flash").html('<img src="/static/img/loader.gif" align="absmiddle"> Loading Results...');
+            },
+          success: function(html){
+              $("#insert_search").show();
+              $("#insert_search").append(html.data);
+              $("#flash").hide();
+          }
+        });
+      }
+    return false;
   });
 });
 </script>
 </head>
 <body>
-<div class="container search-table">
-<h2 align="center">Pesque-UNEB</h2>
-            <div class="search-box">
-                <div class="row">
-                    <div class="col-md-3">
-                        <h5>Campo de Pesquisa:</h5>
-                    </div>
-                    <div class="col-md-9">
-                        <input type="text" name="search_text" id="search_text" class="form-control" placeholder="Informe a palavra">
-                    </div>
-                </div>
-            </div>
-    <div>
-
-    </div>
-   <div id="result"></div>
+<div align="center">
+  <div style="width:700px">
+  <div style="margin-top:20px; text-align:left">
+    <p align="center"><h1>PESQUE-UNEB </h1></p>
+    <form method="get" action="">
+    <input type="text" name="search" id="search_box" class='search_box'/>
+    <input type="submit" value="Search" class="search_button" /><br />
+    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex :</b> Ciência de Dados</span>
+    </form>
+  </div>
+  <div>
+    <div id="searchword">Search results for <span class="searchword"></span></div>
+    <div id="flash"></div>
+    <ol id="insert_search" class="update"></ol>
+  </div>
+  </div>
 </div>
 </body>
 </html>

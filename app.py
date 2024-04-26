@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, jsonify
-import psycopg2
+import psycopg2  # pip install psycopg2
 import psycopg2.extras
 
 app = Flask(__name__)
+
+app.secret_key = "caircocoders-ednalan"
 
 DB_HOST = "localhost"
 DB_NAME = "tcc_db"
@@ -11,35 +13,53 @@ DB_PASS = "1989"
 
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route("/ajaxlivesearch", methods=["POST", "GET"])
-def ajaxlivesearch():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+@app.route("/searchdata", methods=["POST", "GET"])
+def searchdata():
     if request.method == 'POST':
-        search_word = request.form['query']
-        print(search_word)
-        if search_word == '':
-            query = "SELECT * from researcher ORDER BY id"
-            cur.execute(query)
+        search_word = request.form['search_word']
+
+        def removePontuacao(texto):
+            pontuacao = ".,:;!-?"
+            for p in pontuacao:
+                texto = texto.replace(p, " ")
+            return texto
+
+        texto_limpo = removePontuacao(search_word)
+        print("Texto limpo:", texto_limpo)
+
+        def contaPalavras(texto):
+            s = removePontuacao(texto)
+            lista = s.split()
+            print("lista de palvras buscada:", lista)
+            return len(lista)
+
+        contaPalavras = contaPalavras(texto_limpo)
+        print("Qntd de palavras dig:", contaPalavras)
+
+        if contaPalavras >= 3:
+
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+            numrows = int(cur.rowcount)
             employee = cur.fetchall()
+            print("Registros encontrados:", numrows)
+            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+
         else:
-            cur.execute("""
-                                               SELECT name::varchar,
-                                                      abstract::varchar,
-                                                      ts_rank(search, websearch_to_tsquery('simple', %s)) +
-                                                      ts_rank(search, phraseto_tsquery('simple', %s)) AS rank
-                                               FROM researcher
-                                               WHERE search @@ websearch_to_tsquery('simple', %s) 
-                                                  OR search @@ phraseto_tsquery('simple', %s)
-                                               ORDER BY rank DESC;
-                                               """, (search_word, search_word, search_word, search_word))
+
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
             numrows = int(cur.rowcount)
             employee = cur.fetchall()
             print(numrows)
-    return jsonify({'htmlresponse': render_template('response.html', employee=employee, numrows=numrows)})
+            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
