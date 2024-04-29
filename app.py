@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import psycopg2  # pip install psycopg2
 import psycopg2.extras
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords #pip install nltk
 from nltk.tokenize import word_tokenize
 
 app = Flask(__name__)
