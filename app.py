@@ -1,14 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import psycopg2  # pip install psycopg2
 import psycopg2.extras
-from nltk.corpus import stopwords #pip install nltk
+from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))
 
 app = Flask(__name__)
 
 DB_HOST = "localhost"
-DB_NAME = "tcc_db"
+DB_NAME = "postgres"
 DB_USER = "postgres"
 DB_PASS = "1989"
 
