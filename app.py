@@ -3,6 +3,7 @@ import psycopg2  # pip install psycopg2
 import psycopg2.extras
 from nltk.corpus import stopwords #pip install nltk
 from nltk.tokenize import word_tokenize
+stop_words = set(stopwords.words('portuguese'))
 
 app = Flask(__name__)
 
@@ -11,7 +12,7 @@ DB_NAME = "tcc_db"
 DB_USER = "postgres"
 DB_PASS = "1989"
 
-stop_words = set(stopwords.words('portuguese'))
+
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
 
 def removePontuacao(texto):
