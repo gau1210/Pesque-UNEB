@@ -5,6 +5,10 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))
 
+#Precisa instalar essa biblioteca pelo cmd python
+#import nltk
+#nltk.download('punkt')
+
 app = Flask(__name__)
 
 DB_HOST = "localhost"
@@ -33,6 +37,15 @@ def removeStop(texto):
 
     return palavras_filtradas
 
+def operadoresBoleanos(texto):
+
+    operadores = ["&","|","!"]
+    palavras = word_tokenize(texto)
+    operadores_boleanos = [palavra for palavra in palavras if palavra.lower() in operadores]
+
+    return operadores_boleanos
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -47,6 +60,8 @@ def searchdata():
         num_palavras = contaPalavras(texto_limpo)
         print("Qntd de palavras dig:", num_palavras)
         palavras_filtradas = removeStop(texto_limpo)
+        operadores_boleanos = operadoresBoleanos(texto_limpo)
+        print("Teste:",operadores_boleanos)
 
         if num_palavras <= 3:
 
