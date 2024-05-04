@@ -39,7 +39,7 @@ def removeStop(texto):
 
 def operadoresBoleanos(texto):
 
-    operadores = ["&","|","!"]
+    operadores = ["and","or","not"]
     palavras = word_tokenize(texto)
     operadores_boleanos = [palavra for palavra in palavras if palavra.lower() in operadores]
 
@@ -61,18 +61,20 @@ def searchdata():
         print("Qntd de palavras dig:", num_palavras)
         palavras_filtradas = removeStop(texto_limpo)
         operadores_boleanos = operadoresBoleanos(texto_limpo)
-        print("Teste:",operadores_boleanos)
 
         if num_palavras <= 3:
 
             termos = palavras_filtradas
+            operador = operadores_boleanos
             print("Termo sem StopWord:", termos)
+            print("Operador selecionado:",operador)
 
-            if len(termos) == 2:
+            if len(termos) == 2 and operador == []:
                 termo1 = termos[0]
                 termo2 = termos[1]
 
                 print('Termos selecionados:', termo1, termo2)
+
                 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
                 cur.execute(
                     "SELECT *, ts_rank_cd(search, websearch_to_tsquery('simple', %s || ' <-> ' || %s)) AS rank FROM "
@@ -85,15 +87,20 @@ def searchdata():
                 print("Registros encontrados:", numrows)
                 return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
             else:
+                
+                if operador == ['and']:
 
-                cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);",
-                            (texto_limpo,))
-                numrows = int(cur.rowcount)
-                employee = cur.fetchall()
-                print(numrows)
-                return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+                    termo1 = termos[0]
+                    termo2 = termos[2]
 
+                    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                    cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s || ' & ' || %s );", (termo1,termo2))
+                    print("Query procurada quando END")
+                    numrows = int(cur.rowcount)
+                    employee = cur.fetchall()
+                    print(numrows)
+                    return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+            
         else:
 
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
