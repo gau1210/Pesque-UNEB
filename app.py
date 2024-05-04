@@ -92,8 +92,7 @@ def searchdata():
                     "DESC;",
                     (termo1, termo2, termo1, termo2)
                 )
-
-                numrows = cur.rowcount
+                numrows = int(cur.rowcount)
                 employee = cur.fetchall()
 
                 csv_filename = 'relatorio.csv'
@@ -109,10 +108,6 @@ def searchdata():
                 print("Registros encontrados:", numrows)
 
                 os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
-
-                print("Retornando a resposta JSON com os dados e o URL do CSV")
-                print("Dados:", render_template('response.html', employee=employee, numrows=numrows))
-                print("URL do CSV:", url_for('download_csv', filename=csv_filename))
 
                 return jsonify({
                     'data': render_template('response.html', employee=employee, numrows=numrows),
