@@ -48,9 +48,7 @@ def operadoresBoleanos(texto):
 
 @app.route('/')
 def index():
-    
     return render_template('index.html')
-
 
 @app.route("/searchdata", methods=["POST", "GET"])
 def searchdata():
@@ -88,6 +86,9 @@ def searchdata():
                 employee = cur.fetchall()
                 print("Registros encontrados:", numrows)
                 return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+                
+                
+            
             else:
                 if operador == ['and']:
 
