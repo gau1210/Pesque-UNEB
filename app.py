@@ -99,7 +99,7 @@ def searchdata():
                 csv_filename = 'relatorio.csv'
                 csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
-                # Escreva os resultados no arquivo CSV, selecionando apenas as colunas desejadas
+                # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                 with open(csv_path, "w", newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(["name", "nome_programa"])  # Cabeçalho do CSV
