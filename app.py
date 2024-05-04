@@ -1,6 +1,10 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, jsonify, send_from_directory, url_for, render_template, request
 import psycopg2  # pip install psycopg2
 import psycopg2.extras
+import shutil
+import csv
+import io
+import os
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))
@@ -10,6 +14,8 @@ stop_words = set(stopwords.words('portuguese'))
 #nltk.download('punkt')
 
 app = Flask(__name__)
+
+app.config['DOWNLOAD_FOLDER'] = r'C:\caminho\para\seu\diretorio\de\downloads'
 
 DB_HOST = "localhost"
 DB_NAME = "postgres"
@@ -50,6 +56,10 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
+@app.route("/download_csv/<filename>")
+def download_csv(filename):
+    return send_from_directory(directory=app.config['DOWNLOAD_FOLDER'], path=filename, as_attachment=True)
+
 @app.route("/searchdata", methods=["POST", "GET"])
 def searchdata():
     if request.method == 'POST':
@@ -84,11 +94,36 @@ def searchdata():
                 )
                 numrows = int(cur.rowcount)
                 employee = cur.fetchall()
+
+                output = io.StringIO()
+                writer = csv.writer(output)
+                writer.writerow(["name", "nome_programa"])  # Cabeçalho do CSV
+
+                for row in employee:
+                    writer.writerow(row)
+                output.seek(0)
+
+                csv_filename = 'relatorio.csv'
+                csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
+
+                # Salve o conteúdo em um arquivo temporário
+                with open("relatorio.csv", "w") as f:
+                    f.write(output.getvalue())
+
                 print("Registros encontrados:", numrows)
-                return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
-                
-                
-            
+
+                os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+                shutil.move(csv_path, os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename))
+
+                print("Retornando a resposta JSON com os dados e o URL do CSV")
+                print("Dados:", render_template('response.html', employee=employee, numrows=numrows))
+                print("URL do CSV:", url_for('download_csv', filename='relatorio.csv'))
+
+                return jsonify({
+                    'data': render_template('response.html', employee=employee, numrows=numrows),
+                    'csv_url': url_for('download_csv', filename=csv_filename)
+                })
+             
             else:
                 if operador == ['and']:
 

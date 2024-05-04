@@ -1,4 +1,30 @@
-<h3>{{numrows}} Registros encontrados</h3>
-{% for row in employee %}
-  <li>{{row.name}} <br/><span style='font-size:12px;'>{{row.nome_programa}}</span></li>
-{% endfor %}
+<!-- Seu código HTML existente para mostrar os registros -->
+<h3>{{ numrows }} Registros encontrados</h3>
+<ul>
+  {% for row in employee %}
+    <li>{{ row.name }} <br/><span style='font-size:12px;'>{{ row.nome_programa }}</span></li>
+  {% endfor %}
+</ul>
+
+<!-- O link de download será adicionado pelo JavaScript -->
+<div id="download_link"></div>
+
+{% if csv_url %}
+<div>
+  <a href="{{ csv_url }}" class="btn btn-primary">Baixar CSV</a>
+</div>
+{% endif %}
+
+<script>
+$(document).ready(function() {
+  // Verifica se há um URL de download disponível
+  var csvUrl = "{{ csv_url }}";
+  if (csvUrl) {
+    // Se houver, cria o link de download
+    var downloadButton = '<a href="' + csvUrl + '" class="btn btn-primary" type="button">Baixar CSV <i class="fa fa-file-csv"></i></a>';
+    // Adiciona o link à div com id "download_link"
+    $("#download_link").append(downloadButton);
+  }
+});
+</script>
+
