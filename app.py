@@ -92,32 +92,27 @@ def searchdata():
                     "DESC;",
                     (termo1, termo2, termo1, termo2)
                 )
-                numrows = int(cur.rowcount)
+
+                numrows = cur.rowcount
                 employee = cur.fetchall()
-
-                output = io.StringIO()
-                writer = csv.writer(output)
-                writer.writerow(["name", "nome_programa"])  # Cabeçalho do CSV
-
-                for row in employee:
-                    writer.writerow(row)
-                output.seek(0)
 
                 csv_filename = 'relatorio.csv'
                 csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
-                # Salve o conteúdo em um arquivo temporário
-                with open("relatorio.csv", "w") as f:
-                    f.write(output.getvalue())
+                # Escreva os resultados no arquivo CSV, selecionando apenas as colunas desejadas
+                with open(csv_path, "w", newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["name", "nome_programa"])  # Cabeçalho do CSV
+                    for row in employee:
+                        writer.writerow([row['name'], row['nome_programa']])
 
                 print("Registros encontrados:", numrows)
 
                 os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
-                shutil.move(csv_path, os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename))
 
                 print("Retornando a resposta JSON com os dados e o URL do CSV")
                 print("Dados:", render_template('response.html', employee=employee, numrows=numrows))
-                print("URL do CSV:", url_for('download_csv', filename='relatorio.csv'))
+                print("URL do CSV:", url_for('download_csv', filename=csv_filename))
 
                 return jsonify({
                     'data': render_template('response.html', employee=employee, numrows=numrows),
