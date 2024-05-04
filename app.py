@@ -40,7 +40,7 @@ def removeStop(texto):
 def operadoresBoleanos(texto):
 
     operadores = ["and","or","not"]
-    palavras = word_tokenize(texto)
+    palavras = word_tokenize(texto.lower())
     operadores_boleanos = [palavra for palavra in palavras if palavra.lower() in operadores]
 
     return operadores_boleanos
@@ -69,7 +69,8 @@ def searchdata():
             print("Termo sem StopWord:", termos)
             print("Operador selecionado:",operador)
 
-            if len(termos) == 2 and operador == []:
+            if len(termos) == 2:
+
                 termo1 = termos[0]
                 termo2 = termos[1]
 
@@ -87,20 +88,51 @@ def searchdata():
                 print("Registros encontrados:", numrows)
                 return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
             else:
-                
                 if operador == ['and']:
 
                     termo1 = termos[0]
                     termo2 = termos[2]
 
                     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                    cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s || ' & ' || %s );", (termo1,termo2))
-                    print("Query procurada quando END")
+                    cur.execute("SELECT * FROM researcher WHERE search @@ to_tsquery('simple', %s || ' & ' || %s);", (termo1,termo2))
+                    print("Query procurada quando and")
                     numrows = int(cur.rowcount)
                     employee = cur.fetchall()
                     print(numrows)
                     return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
-            
+                
+                else:
+                    if operador == ['or']:
+                
+                        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                        cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+                        print("Query procurada quando or")
+                        numrows = int(cur.rowcount)
+                        employee = cur.fetchall()
+                        print(numrows)
+                        return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+                    else:
+                        if operador == ['not']:
+
+                            termo1 = termos[0]
+                            termo2 = termos[2]
+
+                            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                            cur.execute("SELECT * FROM researcher WHERE search @@ to_tsquery('simple', %s || ' & ! ' || %s);", (termo1,termo2))
+                            print("Query procurada quando not")
+                            numrows = int(cur.rowcount)
+                            employee = cur.fetchall()
+                            print(numrows)
+                            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+                        
+                        else:
+
+                            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+                            numrows = int(cur.rowcount)
+                            employee = cur.fetchall()
+                            print(numrows)
+                            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})       
         else:
 
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
