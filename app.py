@@ -54,6 +54,13 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
+@app.route("/get_details/<int:id>")
+def get_details(id):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute("SELECT * FROM search_index WHERE id = %s", (id,))
+    details = cur.fetchone()
+    return render_template('details.html', details=details)
+
 @app.route("/download_csv/<filename>")
 def download_csv(filename):
     return send_from_directory(directory=app.config['DOWNLOAD_FOLDER'], path=filename, as_attachment=True)
@@ -85,8 +92,8 @@ def searchdata():
 
                 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
                 cur.execute(
-                    "SELECT *, ts_rank_cd(document, websearch_to_tsquery('simple', %s || ' <-> ' || %s)) AS rank FROM "
-                    "search_index WHERE document @@ websearch_to_tsquery('simple', %s || ' <-> ' || %s) ORDER BY rank "
+                    "SELECT *, ts_rank_cd(search, websearch_to_tsquery('simple', %s || ' <-> ' || %s)) AS rank FROM "
+                    "researcher WHERE search @@ websearch_to_tsquery('simple', %s || ' <-> ' || %s) ORDER BY rank "
                     "DESC;",
                     (termo1, termo2, termo1, termo2)
                 )
@@ -99,9 +106,9 @@ def searchdata():
                 # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                 with open(csv_path, "w", newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
-                    writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                    writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
                     for row in employee:
-                        writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+                        writer.writerow([row['name'], row['abstract']])
 
                 print("Registros encontrados:", numrows)
 
@@ -119,7 +126,7 @@ def searchdata():
                     termo2 = termos[2]
 
                     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                    cur.execute("SELECT * FROM search_index WHERE document @@ to_tsquery('simple', %s || ' & ' || %s);", (termo1,termo2))
+                    cur.execute("SELECT * FROM researcher WHERE search @@ to_tsquery('simple', %s || ' & ' || %s);", (termo1,termo2))
                     print("Query procurada quando and")
                     numrows = int(cur.rowcount)
                     employee = cur.fetchall()
@@ -130,9 +137,9 @@ def searchdata():
                     # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                     with open(csv_path, "w", newline='', encoding='utf-8') as f:
                         writer = csv.writer(f)
-                        writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                        writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
                         for row in employee:
-                            writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+                            writer.writerow([row['name'], row['abstract']])
 
                     print("Registros encontrados:", numrows)
 
@@ -147,7 +154,7 @@ def searchdata():
                     if operador == ['or']:
                 
                         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                        cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+                        cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
                         print("Query procurada quando or")
                         numrows = int(cur.rowcount)
                         employee = cur.fetchall()
@@ -158,9 +165,9 @@ def searchdata():
                         # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                         with open(csv_path, "w", newline='', encoding='utf-8') as f:
                             writer = csv.writer(f)
-                            writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                            writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
                             for row in employee:
-                                writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+                                writer.writerow([row['name'], row['abstract']])
 
                         print("Registros encontrados:", numrows)
 
@@ -177,7 +184,7 @@ def searchdata():
                             termo2 = termos[2]
 
                             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                            cur.execute("SELECT * FROM search_index WHERE document @@ to_tsquery('simple', %s || ' & ! ' || %s);", (termo1,termo2))
+                            cur.execute("SELECT * FROM researcher WHERE search @@ to_tsquery('simple', %s || ' & ! ' || %s);", (termo1,termo2))
                             print("Query procurada quando not")
                             numrows = int(cur.rowcount)
                             employee = cur.fetchall()
@@ -188,9 +195,9 @@ def searchdata():
                             # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                             with open(csv_path, "w", newline='', encoding='utf-8') as f:
                                 writer = csv.writer(f)
-                                writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                                writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
                                 for row in employee:
-                                    writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+                                    writer.writerow([row['name'], row['abstract']])
 
                             print("Registros encontrados:", numrows)
 
@@ -204,7 +211,7 @@ def searchdata():
                         else:
 
                             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                            cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+                            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
                             print("teste1")
                             numrows = int(cur.rowcount)
                             employee = cur.fetchall()
@@ -215,9 +222,9 @@ def searchdata():
                             # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                             with open(csv_path, "w", newline='', encoding='utf-8') as f:
                                 writer = csv.writer(f)
-                                writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                                writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
                                 for row in employee:
-                                    writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+                                    writer.writerow([row['name'], row['abstract']])
 
                             print("Registros encontrados:", numrows)
 
@@ -230,7 +237,7 @@ def searchdata():
         else:
 
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
             print("teste2")
             numrows = int(cur.rowcount)
             employee = cur.fetchall()
@@ -241,9 +248,9 @@ def searchdata():
             # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
             with open(csv_path, "w", newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
-                writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
                 for row in employee:
-                    writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+                    writer.writerow([row['name'], row['abstract']])
 
             print("Registros encontrados:", numrows)
 

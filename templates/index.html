@@ -10,38 +10,55 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 $(function() {
-  $(".search_button").click(function() {
-    var search_word = $("#search_box").val();
-    var dataString = 'search_word=' + search_word;
-    if (search_word == '') {
-      // Se a caixa de busca estiver vazia, não faça nada.
-    } else {
-      $.ajax({
-        type: "POST",
-        url: "/searchdata",
-        data: dataString,
-        cache: false,
-        beforeSend: function(html) {
-          document.getElementById("insert_search").innerHTML = '';
-          $("#flash").show();
-          $("#searchword").show();
-          $(".searchword").html(search_word);
-          $("#flash").html('<img src="/static/img/loader.gif" align="absmiddle"> Loading Results...');
-        },
-        success: function(html) {
-          $("#insert_search").show();
-          $("#insert_search").append(html.data);
-          // Adiciona o link de download do CSV
-          if (html.csv_url) {
-            var downloadButton = '<a href="' + html.csv_url + '" class="btn btn-primary" type="button">Baixar CSV <i class="fa fa-file-csv"></i></a>';
-            $("#insert_search").append(downloadButton);
-          }
-          $("#flash").hide();
+    // Evento de clique para o botão de busca
+    $(".search_button").click(function() {
+        var search_word = $("#search_box").val();
+        var dataString = 'search_word=' + search_word;
+        if (search_word == '') {
+            // Se a caixa de busca estiver vazia, não faça nada.
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/searchdata",
+                data: dataString,
+                cache: false,
+                beforeSend: function(html) {
+                    document.getElementById("insert_search").innerHTML = '';
+                    $("#flash").show();
+                    $("#searchword").show();
+                    $(".searchword").html(search_word);
+                    $("#flash").html('<img src="/static/img/loader.gif" align="absmiddle"> Loading Results...');
+                },
+                success: function(html) {
+                    $("#insert_search").show();
+                    $("#insert_search").append(html.data);
+                    // Adiciona o link de download do CSV
+                    if (html.csv_url) {
+                        var downloadButton = '<a href="' + html.csv_url + '" class="btn btn-primary" type="button">Baixar CSV <i class="fa fa-file-csv"></i></a>';
+                        $("#insert_search").append(downloadButton);
+                    }
+                    $("#flash").hide();
+
+                    // Evento de clique para cada item da lista de resultados
+                    $(".show-details").click(function() {
+                        var id = $(this).data('id');
+                        $.ajax({
+                            type: 'GET',
+                            url: '/get_details/' + id, // Rota Flask para recuperar detalhes do registro
+                            success: function(data) {
+                                $('#detailsBody').html(data);
+                                $('#detailsModal').modal('show'); // Mostrar o modal com os detalhes
+                            },
+                            error: function(xhr, status, error) {
+                                alert('Erro ao recuperar detalhes do registro');
+                            }
+                        });
+                    });
+                }
+            });
         }
-      });
-    }
-    return false;
-  });
+        return false;
+    });
 });
 
 </script>
