@@ -99,9 +99,9 @@ def searchdata():
                 # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                 with open(csv_path, "w", newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
-                    writer.writerow(["name", "nome_programa"])  # Cabeçalho do CSV
+                    writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
                     for row in employee:
-                        writer.writerow([row['name'], row['nome_programa']])
+                        writer.writerow([row['name'], row['nome_programa'], row['abstract']])
 
                 print("Registros encontrados:", numrows)
 
@@ -123,8 +123,25 @@ def searchdata():
                     print("Query procurada quando and")
                     numrows = int(cur.rowcount)
                     employee = cur.fetchall()
-                    print(numrows)
-                    return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+            
+                    csv_filename = 'relatorio.csv'
+                    csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
+
+                    # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
+                    with open(csv_path, "w", newline='', encoding='utf-8') as f:
+                        writer = csv.writer(f)
+                        writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                        for row in employee:
+                            writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+
+                    print("Registros encontrados:", numrows)
+
+                    os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+
+                    return jsonify({
+                        'data': render_template('response.html', employee=employee, numrows=numrows),
+                        'csv_url': url_for('download_csv', filename=csv_filename)
+                    })
                 
                 else:
                     if operador == ['or']:
@@ -134,8 +151,25 @@ def searchdata():
                         print("Query procurada quando or")
                         numrows = int(cur.rowcount)
                         employee = cur.fetchall()
-                        print(numrows)
-                        return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+                        
+                        csv_filename = 'relatorio.csv'
+                        csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
+
+                        # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
+                        with open(csv_path, "w", newline='', encoding='utf-8') as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                            for row in employee:
+                                writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+
+                        print("Registros encontrados:", numrows)
+
+                        os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+
+                        return jsonify({
+                            'data': render_template('response.html', employee=employee, numrows=numrows),
+                            'csv_url': url_for('download_csv', filename=csv_filename)
+                        })
                     else:
                         if operador == ['not']:
 
@@ -147,8 +181,25 @@ def searchdata():
                             print("Query procurada quando not")
                             numrows = int(cur.rowcount)
                             employee = cur.fetchall()
-                            print(numrows)
-                            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+                            
+                            csv_filename = 'relatorio.csv'
+                            csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
+
+                            # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
+                            with open(csv_path, "w", newline='', encoding='utf-8') as f:
+                                writer = csv.writer(f)
+                                writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                                for row in employee:
+                                    writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+
+                            print("Registros encontrados:", numrows)
+
+                            os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+
+                            return jsonify({
+                                'data': render_template('response.html', employee=employee, numrows=numrows),
+                                'csv_url': url_for('download_csv', filename=csv_filename)
+                            })
                         
                         else:
 
@@ -157,8 +208,25 @@ def searchdata():
                             print("teste1")
                             numrows = int(cur.rowcount)
                             employee = cur.fetchall()
-                            print(numrows)
-                            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})       
+                            
+                            csv_filename = 'relatorio.csv'
+                            csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
+
+                            # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
+                            with open(csv_path, "w", newline='', encoding='utf-8') as f:
+                                writer = csv.writer(f)
+                                writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                                for row in employee:
+                                    writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+
+                            print("Registros encontrados:", numrows)
+
+                            os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+
+                            return jsonify({
+                                'data': render_template('response.html', employee=employee, numrows=numrows),
+                                'csv_url': url_for('download_csv', filename=csv_filename)
+                            })      
         else:
 
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -166,9 +234,25 @@ def searchdata():
             print("teste2")
             numrows = int(cur.rowcount)
             employee = cur.fetchall()
-            print(numrows)
-            return jsonify({'data': render_template('response.html', employee=employee, numrows=numrows)})
+            
+            csv_filename = 'relatorio.csv'
+            csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
+            # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
+            with open(csv_path, "w", newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(["name", "nome_programa", "abstract"])  # Cabeçalho do CSV
+                for row in employee:
+                    writer.writerow([row['name'], row['nome_programa'], row['abstract']])
+
+            print("Registros encontrados:", numrows)
+
+            os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+
+            return jsonify({
+                'data': render_template('response.html', employee=employee, numrows=numrows),
+                'csv_url': url_for('download_csv', filename=csv_filename)
+        })
 
 if __name__ == "__main__":
     app.run(debug=True)
