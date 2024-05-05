@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify, send_from_directory, url_for, render_template, request
 import psycopg2  # pip install psycopg2
 import psycopg2.extras
