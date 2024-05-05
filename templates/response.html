@@ -1,8 +1,13 @@
 <h3>{{ numrows }} Registros encontrados</h3>
-<ul>
+<ol id="insert_search" class="update">
   {% for row in employee %}
-    <li>{{ row.name }}<br/><span style='font-size:12px;'>{{ row.nome_programa }}</span> <button data-id='{{ row.id }}' class="userinfo btn btn-primary">Info</button></li>
+    <li>
+      {{ row.name }} 
+      <br/>
+      <span style='font-size:12px;'>{{ row.nome_programa }}</span>
+      <button type="button" class="btn btn-info btn-sm show-details" data-toggle="modal" data-target="#detailsModal" data-id="{{ row.id }}">+</button>
+    </li>
   {% endfor %}
-</ul>
+</ol>
 <!-- Container para o link de download do CSV -->
 <div id="download_link" style="margin-top: 20px;"></div>

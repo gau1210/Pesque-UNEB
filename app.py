@@ -56,6 +56,8 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
+@app.route("/get_abstract", methods=["GET"])
+
 @app.route("/download_csv/<filename>")
 def download_csv(filename):
     return send_from_directory(directory=app.config['DOWNLOAD_FOLDER'], path=filename, as_attachment=True)
