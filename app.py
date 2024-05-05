@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, send_from_directory, url_for, render_template, request
 import psycopg2  # pip install psycopg2
 import psycopg2.extras
+from uuid import UUID  # Adicionando a importação da classe UUID
 import csv
 import os
 from nltk.corpus import stopwords 
@@ -54,8 +55,13 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
-@app.route("/get_details/<int:id>")
+@app.route("/get_details/<id>")
 def get_details(id):
+    try:
+        uuid_obj = UUID(id, version=4)  # Verifica se o ID fornecido é um UUID válido
+    except ValueError:
+        return "ID inválido", 404  # Retorna um erro 404 se o ID não for um UUID válido
+
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("SELECT * FROM search_index WHERE id = %s", (id,))
     details = cur.fetchone()
