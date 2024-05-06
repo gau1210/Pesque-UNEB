@@ -50,7 +50,6 @@ def operadoresBoleanos(texto):
 
     return operadores_boleanos
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -153,7 +152,7 @@ def searchdata():
 
                     return jsonify({
                         'data': render_template('response.html', employee=employee, numrows=numrows),
-                        'csv_url': url_for('download_csv', filename=csv_filename)
+                        'csv_url': url_for('download_csv', filename=csv_filename),
                     })
                 
                 else:
