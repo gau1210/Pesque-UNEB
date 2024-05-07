@@ -123,7 +123,7 @@ def searchdata():
                     'data': render_template('response.html', employee=employee, numrows=numrows),
                     'csv_url': url_for('download_csv', filename=csv_filename)
                 })
-             
+            
             else:
                 if operador == ['and']:
 
