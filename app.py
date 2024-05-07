@@ -62,7 +62,7 @@ def get_details(id):
         return "ID inválido", 404  # Retorna um erro 404 se o ID não for um UUID válido
 
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("SELECT * FROM researcher WHERE id = %s", (id,))
+    cur.execute("SELECT * FROM search_index WHERE id = %s", (id,))
     details = cur.fetchone()
     return render_template('details.html', details=details)
     
@@ -97,8 +97,8 @@ def searchdata():
 
                 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
                 cur.execute(
-                    "SELECT *, ts_rank_cd(search, websearch_to_tsquery('simple', %s || ' <-> ' || %s)) AS rank FROM "
-                    "researcher WHERE search @@ websearch_to_tsquery('simple', %s || ' <-> ' || %s) ORDER BY rank "
+                    "SELECT *, ts_rank_cd(document, websearch_to_tsquery('simple', %s || ' <-> ' || %s)) AS rank FROM "
+                    "search_index WHERE document @@ websearch_to_tsquery('simple', %s || ' <-> ' || %s) ORDER BY rank "
                     "DESC;",
                     (termo1, termo2, termo1, termo2)
                 )
@@ -131,7 +131,7 @@ def searchdata():
                     termo2 = termos[2]
 
                     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                    cur.execute("SELECT * FROM researcher WHERE search @@ to_tsquery('simple', %s || ' & ' || %s);", (termo1,termo2))
+                    cur.execute("SELECT * FROM search_index WHERE document @@ to_tsquery('simple', %s || ' & ' || %s);", (termo1,termo2))
                     print("Query procurada quando and")
                     numrows = int(cur.rowcount)
                     employee = cur.fetchall()
@@ -159,7 +159,7 @@ def searchdata():
                     if operador == ['or']:
                 
                         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                        cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+                        cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
                         print("Query procurada quando or")
                         numrows = int(cur.rowcount)
                         employee = cur.fetchall()
@@ -189,7 +189,7 @@ def searchdata():
                             termo2 = termos[2]
 
                             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                            cur.execute("SELECT * FROM researcher WHERE search @@ to_tsquery('simple', %s || ' & ! ' || %s);", (termo1,termo2))
+                            cur.execute("SELECT * FROM search_index WHERE document @@ to_tsquery('simple', %s || ' & ! ' || %s);", (termo1,termo2))
                             print("Query procurada quando not")
                             numrows = int(cur.rowcount)
                             employee = cur.fetchall()
@@ -216,7 +216,7 @@ def searchdata():
                         else:
 
                             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+                            cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
                             print("teste1")
                             numrows = int(cur.rowcount)
                             employee = cur.fetchall()
@@ -242,7 +242,7 @@ def searchdata():
         else:
 
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cur.execute("SELECT * FROM researcher WHERE search @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+            cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
             print("teste2")
             numrows = int(cur.rowcount)
             employee = cur.fetchall()

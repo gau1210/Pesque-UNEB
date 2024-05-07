@@ -60,6 +60,11 @@ $(function() {
         }
         return false;
     });
+
+    // Evento de clique para fechar o modal quando o botão de fechar é clicado
+    $('#detailsModal .close').click(function() {
+        $('#detailsModal').modal('hide'); // Oculta o modal
+    });
 });
 
 </script>
