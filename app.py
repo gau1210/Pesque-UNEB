@@ -62,10 +62,10 @@ def get_details(id):
         return "ID inválido", 404  # Retorna um erro 404 se o ID não for um UUID válido
 
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("SELECT * FROM search_index WHERE id = %s", (id,))
+    cur.execute("SELECT * FROM researcher WHERE id = %s", (id,))
     details = cur.fetchone()
     return render_template('details.html', details=details)
-
+    
 @app.route("/download_csv/<filename>")
 def download_csv(filename):
     return send_from_directory(directory=app.config['DOWNLOAD_FOLDER'], path=filename, as_attachment=True)
