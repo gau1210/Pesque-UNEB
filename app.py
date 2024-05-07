@@ -242,7 +242,13 @@ def searchdata():
         else:
 
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+            #cur.execute("SELECT * FROM search_index WHERE document @@ websearch_to_tsquery('simple', %s);", (texto_limpo,))
+            cur.execute(
+                    "SELECT *, ts_rank_cd(document, websearch_to_tsquery('simple', %s)) AS rank FROM "
+                    "search_index WHERE document @@ websearch_to_tsquery('simple', %s) ORDER BY rank "
+                    "DESC;",
+                    (texto_limpo,texto_limpo)
+                )
             print("teste2")
             numrows = int(cur.rowcount)
             employee = cur.fetchall()
