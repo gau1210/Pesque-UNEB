@@ -63,7 +63,7 @@ def autocomplete():
         cur = conn.cursor()
         # Divide o termo em palavras individuais
         search_terms = term.split()
-        # Construa uma lista de placeholders para cada palavra
+        # Constroi uma lista de placeholders para cada palavra
         placeholders = ['%{}%'.format(t) for t in search_terms]
         # Constroi uma string de consulta com um predicado OR para cada palavra
         query = "SELECT word, similarity(word, %s) AS sml FROM unique_lexeme WHERE "
@@ -74,7 +74,7 @@ def autocomplete():
         print("Sugestões:", suggestions)
         return jsonify(suggestions=suggestions)
     else:
-        # Se o termo de busca for vazio, retorne uma lista vazia de sugestões
+        # Se o termo de busca for vazio, retorna uma lista vazia de sugestões
         return jsonify(suggestions=[])
 
 @app.route("/get_details/<id>")
@@ -162,10 +162,9 @@ def searchdata():
                     csv_filename = 'relatorio.csv'
                     csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
-                    # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                     with open(csv_path, "w", newline='', encoding='utf-8') as f:
                         writer = csv.writer(f)
-                        writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
+                        writer.writerow(["name", "abstract"]) 
                         for row in employee:
                             writer.writerow([row['name'], row['abstract']])
 
@@ -190,10 +189,9 @@ def searchdata():
                         csv_filename = 'relatorio.csv'
                         csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
-                        # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                         with open(csv_path, "w", newline='', encoding='utf-8') as f:
                             writer = csv.writer(f)
-                            writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
+                            writer.writerow(["name", "abstract"])  
                             for row in employee:
                                 writer.writerow([row['name'], row['abstract']])
 
@@ -220,10 +218,9 @@ def searchdata():
                             csv_filename = 'relatorio.csv'
                             csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
-                            # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                             with open(csv_path, "w", newline='', encoding='utf-8') as f:
                                 writer = csv.writer(f)
-                                writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
+                                writer.writerow(["name", "abstract"])
                                 for row in employee:
                                     writer.writerow([row['name'], row['abstract']])
 
@@ -247,10 +244,9 @@ def searchdata():
                             csv_filename = 'relatorio.csv'
                             csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
-                            # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
                             with open(csv_path, "w", newline='', encoding='utf-8') as f:
                                 writer = csv.writer(f)
-                                writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
+                                writer.writerow(["name", "abstract"])
                                 for row in employee:
                                     writer.writerow([row['name'], row['abstract']])
 
@@ -279,10 +275,9 @@ def searchdata():
             csv_filename = 'relatorio.csv'
             csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
-            # Escreve os resultados no arquivo CSV, selecionando apenas as colunas desejadas
             with open(csv_path, "w", newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
-                writer.writerow(["name", "abstract"])  # Cabeçalho do CSV
+                writer.writerow(["name", "abstract"])
                 for row in employee:
                     writer.writerow([row['name'], row['abstract']])
 
