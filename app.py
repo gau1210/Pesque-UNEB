@@ -54,6 +54,24 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
+@app.route("/autocomplete", methods=["GET"])
+def autocomplete():
+    term = request.args.get('term')  # Termo parcial fornecido pelo usuário
+
+    # Verifica se o termo de busca é válido
+    if term:
+        cur = conn.cursor()
+        # Consulta SQL para buscar palavras semelhantes usando a função similarity
+        cur.execute(
+            "SELECT word, similarity(word, %s) AS sml FROM unique_lexeme WHERE word ILIKE %s ORDER BY sml DESC, word LIMIT 10",
+            (term, '%' + term + '%',)
+        )
+        suggestions = [{'word': row[0], 'similarity': row[1]} for row in cur.fetchall()]  # Lista de sugestões
+        return jsonify(suggestions=suggestions)
+    else:
+        # Se o termo de busca for vazio, retorne uma lista vazia de sugestões
+        return jsonify(suggestions=[])
+
 @app.route("/get_details/<id>")
 def get_details(id):
     try:

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +10,31 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
+    // Função para buscar sugestões toda vez que o texto da caixa de busca mudar
+    $("#search_box").on('input', function() {
+        var term = $(this).val();
+        $.ajax({
+            type: "GET",
+            url: "/autocomplete",
+            data: { term: term },
+            success: function(data) {
+                // Limpa a lista de sugestões
+                $("#search_suggestions").empty();
+                // Adiciona as sugestões à lista
+                data.suggestions.forEach(function(suggestion) {
+                    $("#search_suggestions").append('<li>' + suggestion.word + '</li>');
+                });
+            }
+        });
+    });
+
+    // Evento de clique em uma sugestão da lista
+    $("#search_suggestions").on('click', 'li', function() {
+        var selectedSuggestion = $(this).text();
+        $("#search_box").val(selectedSuggestion);
+        $("#search_suggestions").empty(); // Limpa a lista de sugestões
+    });
+
     // Evento de clique para o botão de busca
     $(".search_button").click(function() {
         var search_word = $("#search_box").val();
