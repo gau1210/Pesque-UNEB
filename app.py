@@ -61,11 +61,15 @@ def autocomplete():
     # Verifica se o termo de busca é válido
     if term:
         cur = conn.cursor()
-        # Consulta SQL para buscar palavras semelhantes usando a função similarity
-        cur.execute(
-            "SELECT word, similarity(word, %s) AS sml FROM unique_lexeme WHERE word ILIKE %s ORDER BY sml DESC, word LIMIT 10",
-            (term, '%' + term + '%',)
-        )
+        # Divida o termo em palavras individuais
+        search_terms = term.split()
+        # Construa uma lista de placeholders para cada palavra
+        placeholders = ['%{}%'.format(t) for t in search_terms]
+        # Construa uma string de consulta com um predicado OR para cada palavra
+        query = "SELECT word, similarity(word, %s) AS sml FROM unique_lexeme WHERE "
+        query += " OR ".join(["word ILIKE %s"] * len(search_terms))
+        query += " ORDER BY sml DESC, word LIMIT 10"
+        cur.execute(query, [term] + placeholders)
         suggestions = [{'word': row[0], 'similarity': row[1]} for row in cur.fetchall()]  # Lista de sugestões
         print("Sugestões:", suggestions)
         return jsonify(suggestions=suggestions)

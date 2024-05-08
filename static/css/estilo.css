@@ -36,3 +36,33 @@ ol.update{
 }
 ol.update li{ border-bottom:#dedede dashed 1px; text-align:left;padding-top:10px;padding-bottom:10px;}
 ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
+.search-container {
+    position: relative;
+}
+
+#suggestions_container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    z-index: 999;
+}
+
+#search_suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+#search_suggestions span {
+    background-color: #f0f0f0;
+    padding: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-right: 5px; /* Espaçamento entre as sugestões */
+    margin-bottom: 5px; /* Espaçamento entre as linhas de sugestões */
+}

@@ -10,35 +10,47 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Evento de entrada para a caixa de busca
-    $("#search_box").on('input', function() {
-        var term = $(this).val().trim(); // Removendo espaços em branco antes e depois do termo de pesquisa
+    // Função para obter sugestões de busca
+    function getSearchSuggestions(term) {
         $.ajax({
             type: "GET",
             url: "/autocomplete",
             data: { term: term },
             success: function(data) {
-                // Limpa a lista de sugestões
-                $("#search_suggestions").empty();
                 // Adiciona as sugestões à lista
                 data.suggestions.forEach(function(suggestion) {
-                    $("#search_suggestions").append('<li>' + suggestion.word + '</li>');
+                    $("#search_suggestions").append('<span>' + suggestion.word + '</span>');
                 });
+                // Exibe a lista de sugestões
+                $("#search_suggestions").show();
+            }
+        });
+    }
+
+    // Evento de entrada para a caixa de busca
+    $("#search_box").on('input', function() {
+        var terms = $(this).val().trim().split(" "); // Obtém todos os termos digitados
+        $("#search_suggestions").empty(); // Limpa a lista de sugestões
+        terms.forEach(function(term) {
+            if (term !== "") {
+                getSearchSuggestions(term); // Obtém sugestões para cada termo digitado
             }
         });
     });
 
     // Evento de clique em uma sugestão da lista
-    $("#search_suggestions").on('click', 'li', function() {
+    $("#search_suggestions").on('click', 'span', function() {
         var selectedSuggestion = $(this).text();
         $("#search_box").val(selectedSuggestion);
         $("#search_suggestions").empty(); // Limpa a lista de sugestões
+        $("#search_suggestions").hide(); // Esconde a lista de sugestões
     });
 
     // Evento de clique para o botão de busca
     $(".search_button").click(function() {
         var search_word = $("#search_box").val().trim(); // Removendo espaços em branco antes e depois do termo de pesquisa
         var dataString = 'search_word=' + encodeURIComponent(search_word); // Codificar o termo de pesquisa para evitar erros de caracteres especiais
+        
         if (search_word == '') {
             // Se a caixa de busca estiver vazia, não faça nada.
         } else {
@@ -52,7 +64,7 @@ $(document).ready(function() {
                     $("#flash").show();
                     $("#searchword").show();
                     $(".searchword").html(search_word);
-                    $("#flash").html('<img src="/static/img/loader.gif" align="absmiddle"> Loading Results...');
+                    $("#flash").html('<img src="/static/img/loader.gif" align="absmiddle"> Carregando Resultados...');
                 },
                 success: function(html) {
                     $("#insert_search").show();
@@ -90,7 +102,6 @@ $(document).ready(function() {
         return false;
     });
 });
-
 </script>
 </head>
 <body>
@@ -101,10 +112,11 @@ $(document).ready(function() {
     <form method="get" action="">
     <input type="text" name="search" id="search_box" class='search_box'/>
     <input type="submit" value="Buscar" class="search_button" /><br />
-    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex :</b> Ciência de Dados</span>
+    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex :</b>Sistemas de informação</span>
     </form>
     <!-- Lista para exibir as sugestões de pesquisa -->
-    <ul id="search_suggestions"></ul>
+    <div id="search_suggestions"></div> <!-- Elemento para exibir as sugestões -->
+    <!--<ul id="search_suggestions"></ul>  -->
   </div>
   <div>
     <div id="searchword">Resultados da pesquisa para: <span class="searchword"></span></div>
