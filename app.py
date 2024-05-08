@@ -61,11 +61,11 @@ def autocomplete():
     # Verifica se o termo de busca é válido
     if term:
         cur = conn.cursor()
-        # Divida o termo em palavras individuais
+        # Divide o termo em palavras individuais
         search_terms = term.split()
         # Construa uma lista de placeholders para cada palavra
         placeholders = ['%{}%'.format(t) for t in search_terms]
-        # Construa uma string de consulta com um predicado OR para cada palavra
+        # Constroi uma string de consulta com um predicado OR para cada palavra
         query = "SELECT word, similarity(word, %s) AS sml FROM unique_lexeme WHERE "
         query += " OR ".join(["word ILIKE %s"] * len(search_terms))
         query += " ORDER BY sml DESC, word LIMIT 10"
