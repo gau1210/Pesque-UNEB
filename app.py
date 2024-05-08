@@ -67,6 +67,7 @@ def autocomplete():
             (term, '%' + term + '%',)
         )
         suggestions = [{'word': row[0], 'similarity': row[1]} for row in cur.fetchall()]  # Lista de sugestões
+        print("Sugestões:", suggestions)
         return jsonify(suggestions=suggestions)
     else:
         # Se o termo de busca for vazio, retorne uma lista vazia de sugestões
@@ -289,6 +290,8 @@ def searchdata():
                 'data': render_template('response.html', employee=employee, numrows=numrows),
                 'csv_url': url_for('download_csv', filename=csv_filename)
         })
+        
+    return render_template('index.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

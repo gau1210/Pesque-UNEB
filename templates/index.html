@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Search usando Jquery, Ajax, Python Flask e Banco de Dados PostgreSQL</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link href="/static/css/estilo.css" rel="stylesheet">
+<title>PESQUE-UNEB</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/estilo.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script type="text/javascript">
+<script>
 $(document).ready(function() {
-    // Função para buscar sugestões toda vez que o texto da caixa de busca mudar
+    // Evento de entrada para a caixa de busca
     $("#search_box").on('input', function() {
-        var term = $(this).val();
+        var term = $(this).val().trim(); // Removendo espaços em branco antes e depois do termo de pesquisa
         $.ajax({
             type: "GET",
             url: "/autocomplete",
@@ -37,8 +37,8 @@ $(document).ready(function() {
 
     // Evento de clique para o botão de busca
     $(".search_button").click(function() {
-        var search_word = $("#search_box").val();
-        var dataString = 'search_word=' + search_word;
+        var search_word = $("#search_box").val().trim(); // Removendo espaços em branco antes e depois do termo de pesquisa
+        var dataString = 'search_word=' + encodeURIComponent(search_word); // Codificar o termo de pesquisa para evitar erros de caracteres especiais
         if (search_word == '') {
             // Se a caixa de busca estiver vazia, não faça nada.
         } else {
