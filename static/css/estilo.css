@@ -40,33 +40,20 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
     position: relative;
 }
 
-#suggestions_container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 5px 5px;
-    z-index: 999;
-}
 
-#search_suggestions {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 5px;
+#search_suggestions li {
+    display: inline-block; /* Exibe as sugestões lado a lado */
+    margin-right: 10px; /* Espaçamento entre as sugestões */
 }
 
 #search_suggestions span {
+    display: inline-block;
     background-color: #f0f0f0;
     padding: 5px;
     border-radius: 3px;
     cursor: pointer;
+    border: 1px solid #ccc; /* Adiciona uma borda de 1px sólida cinza */
     margin-right: 5px; /* Espaçamento entre as sugestões */
     margin-bottom: 5px; /* Espaçamento entre as linhas de sugestões */
 }
 
-#search_suggestions span::before {
-    content: none; /* Remove o ponto em negrito */
-}
