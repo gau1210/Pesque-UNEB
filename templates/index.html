@@ -57,9 +57,11 @@ $(document).ready(function() {
         $("#search_suggestions").empty(); // Limpar a lista de sugestões antes de adicionar novas
         $.each(suggestions, function(index, suggestion) {
             var word = suggestion.word.replace('.', ''); // Remover ponto da palavra, se presente
-            $("#search_suggestions").append("<li>" + word + "</li>"); // Adicionar sugestões à lista
+            word = word.trim(); // Remover espaços em branco extras
+            $("#search_suggestions").append("<li><span>" + word + "</span></li>"); // Adicionar sugestões à lista com a tag <span>
         });
     }
+
 
     // Evento de clique em uma sugestão
     $(document).on("click", "#search_suggestions li", function() {
