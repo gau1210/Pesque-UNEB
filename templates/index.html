@@ -8,45 +8,66 @@
 <link href="/static/css/estilo.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+<div align="center">
+  <div style="width:700px">
+  <div style="margin-top:20px; text-align:left">
+    <p align="center"><h1>PESQUE-UNEB </h1></p>
+    <form method="get" action="">
+    <input type="text" name="search" id="search_box" class='search_box'/>
+    <input type="submit" value="Buscar" class="search_button" /><br />
+    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex:</b>Sistemas de informação</span>
+    </form>
+    <!-- Lista para exibir as sugestões de pesquisa -->
+    <!--<ul id="search_suggestions"></ul>  -->
+    <div id="search_suggestions"></div> <!-- Elemento para exibir as sugestões -->
+  </div>
+  <div>
+    <div id="searchword">Resultados da pesquisa para: <span class="searchword"></span></div>
+    <div id="flash"></div>
+    <ol id="insert_search" class="update"></ol>
+  </div>
+  </div>
+</div>
 <script>
 $(document).ready(function() {
-    // Função para obter sugestões de busca
-    function getSearchSuggestions(term) {
-        $.ajax({
-            type: "GET",
-            url: "/autocomplete",
-            data: { term: term },
-            success: function(data) {
-                // Adiciona as sugestões à lista
-                data.suggestions.forEach(function(suggestion) {
-                    $("#search_suggestions").append('<span>' + suggestion.word + '</span>');
-                });
-                // Exibe a lista de sugestões
-                $("#search_suggestions").show();
-            }
+    // Evento de digitação no campo de busca para autocompletar
+    $("#search_box").keyup(function() {
+        var term = $(this).val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
+        
+        if (term != '') {
+            $.ajax({
+                type: "GET",
+                url: "/autocomplete", // Rota Flask para obter sugestões de autocompletar
+                data: { term: term },
+                cache: false,
+                success: function(response) {
+                    var suggestions = response.suggestions; // Obter sugestões do JSON de resposta
+                    displaySuggestions(suggestions); // Exibir sugestões na interface do usuário
+                }
+            });
+        } else {
+            $("#search_suggestions").empty(); // Limpar a lista de sugestões se o campo de busca estiver vazio
+        }
+    });
+
+    // Função para exibir sugestões na interface do usuário
+    function displaySuggestions(suggestions) {
+        $("#search_suggestions").empty(); // Limpar a lista de sugestões antes de adicionar novas
+        $.each(suggestions, function(index, suggestion) {
+            $("#search_suggestions").append("<li>" + suggestion.word + "</li>"); // Adicionar sugestões à lista
         });
     }
 
-    // Evento de entrada para a caixa de busca
-    $("#search_box").on('input', function() {
-        var terms = $(this).val().trim().split(" "); // Obtém todos os termos digitados
-        $("#search_suggestions").empty(); // Limpa a lista de sugestões
-        terms.forEach(function(term) {
-            if (term !== "") {
-                getSearchSuggestions(term); // Obtém sugestões para cada termo digitado
-            }
-        });
+    // Evento de clique em uma sugestão
+    $(document).on("click", "#search_suggestions li", function() {
+        var suggestion = $(this).text(); // Obter o texto da sugestão clicada
+        $("#search_box").val(suggestion); // Preencher o campo de busca com a sugestão clicada
+        $("#search_suggestions").empty(); // Limpar a lista de sugestões
     });
 
-    // Evento de clique em uma sugestão da lista
-    $("#search_suggestions").on('click', 'span', function() {
-        var selectedSuggestion = $(this).text();
-        $("#search_box").val(selectedSuggestion);
-        $("#search_suggestions").empty(); // Limpa a lista de sugestões
-        $("#search_suggestions").hide(); // Esconde a lista de sugestões
-    });
-
-    // Evento de clique para o botão de busca
+    // Evento de clique no botão de busca
     $(".search_button").click(function() {
         var search_word = $("#search_box").val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
         var dataString = 'search_word=' + encodeURIComponent(search_word); // Codificar o termo de pesquisa para evitar erros de caracteres especiais
@@ -103,28 +124,6 @@ $(document).ready(function() {
     });
 });
 </script>
-</head>
-<body>
-<div align="center">
-  <div style="width:700px">
-  <div style="margin-top:20px; text-align:left">
-    <p align="center"><h1>PESQUE-UNEB </h1></p>
-    <form method="get" action="">
-    <input type="text" name="search" id="search_box" class='search_box'/>
-    <input type="submit" value="Buscar" class="search_button" /><br />
-    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex :</b>Sistemas de informação</span>
-    </form>
-    <!-- Lista para exibir as sugestões de pesquisa -->
-    <!--<ul id="search_suggestions"></ul>  -->
-    <div id="search_suggestions"></div> <!-- Elemento para exibir as sugestões -->
-  </div>
-  <div>
-    <div id="searchword">Resultados da pesquisa para: <span class="searchword"></span></div>
-    <div id="flash"></div>
-    <ol id="insert_search" class="update"></ol>
-  </div>
-  </div>
-</div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
