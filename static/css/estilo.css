@@ -41,19 +41,21 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
 }
 
 
-#search_suggestions li {
-    display: inline-block; /* Exibe as sugestões lado a lado */
-    margin-right: 10px; /* Espaçamento entre as sugestões */
+#search_suggestions {
+    display: flex;
+    flex-wrap: wrap;
 }
 
-#search_suggestions span {
-    display: inline-block;
+#search_suggestions li {
+    margin-right: 5px; /* Espaçamento entre as sugestões */
+    margin-bottom: 5px; /* Espaçamento entre as linhas de sugestões */
+}
+
+#search_suggestions li span {
     background-color: #f0f0f0;
     padding: 5px;
     border-radius: 3px;
     cursor: pointer;
     border: 1px solid #ccc; /* Adiciona uma borda de 1px sólida cinza */
-    margin-right: 5px; /* Espaçamento entre as sugestões */
-    margin-bottom: 5px; /* Espaçamento entre as linhas de sugestões */
 }
 
