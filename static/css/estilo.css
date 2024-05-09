@@ -66,3 +66,7 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
     margin-right: 5px; /* Espaçamento entre as sugestões */
     margin-bottom: 5px; /* Espaçamento entre as linhas de sugestões */
 }
+
+#search_suggestions span::before {
+    content: none; /* Remove o ponto em negrito */
+}
