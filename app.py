@@ -4,6 +4,8 @@ import psycopg2.extras
 from uuid import UUID  # Adicionando a importação da classe UUID
 import csv
 import os
+import Levenshtein
+from itertools import combinations
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))
@@ -58,25 +60,41 @@ def index():
 def autocomplete():
     term = request.args.get('term')  # Termo parcial fornecido pelo usuário
 
-    # Verifica se o termo de busca é válido
     if term:
         cur = conn.cursor()
+
         # Divide o termo em palavras individuais
         search_terms = term.split()
-        # Constroi uma lista de placeholders para cada palavra
-        placeholders = ['%{}%'.format(t) for t in search_terms]
-        # Constroi uma string de consulta com um predicado OR para cada palavra
-        query = "SELECT word, similarity(word, %s) AS sml FROM unique_lexeme WHERE "
-        query += " OR ".join(["word ILIKE %s"] * len(search_terms))
-        query += " ORDER BY sml DESC, word LIMIT 10"
-        cur.execute(query, [term] + placeholders)
-        suggestions = [{'word': row[0], 'similarity': row[1]} for row in cur.fetchall()]  # Lista de sugestões
-        print("Sugestões:", suggestions)
+
+        # Lista para armazenar sugestões
+        suggestions = []
+
+        # Consulta ao banco de dados por frases que correspondem aos termos inseridos até o momento
+        for i in range(1, len(search_terms) + 1):
+            current_term = ' '.join(search_terms[:i])
+            cur.execute("SELECT word FROM unique_lexeme WHERE word ILIKE %s", ('%' + current_term + '%',))
+            results = cur.fetchall()
+            for result in results:
+                distance = Levenshtein.distance(term.lower(), result[0].lower())
+                suggestions.append({'word': result[0], 'similarity': 1 - distance / max(len(term), len(result[0]))})
+
+        # Verifica sugestões para frases com conectivos
+        if len(search_terms) > 1:
+            for i in range(1, len(search_terms)):
+                phrase = ' '.join(search_terms[i-1:i+1])
+                cur.execute("SELECT word FROM unique_lexeme WHERE word ILIKE %s", ('%' + phrase + '%',))
+                results = cur.fetchall()
+                for result in results:
+                    distance = Levenshtein.distance(term.lower(), result[0].lower())
+                    suggestions.append({'word': result[0], 'similarity': 1 - distance / max(len(term), len(result[0]))})
+
+        # Ordena as sugestões com base na similaridade
+        suggestions = sorted(suggestions, key=lambda x: x['similarity'], reverse=True)
+
         return jsonify(suggestions=suggestions)
     else:
-        # Se o termo de busca for vazio, retorna uma lista vazia de sugestões
         return jsonify(suggestions=[])
-
+    
 @app.route("/get_details/<id>")
 def get_details(id):
     try:
