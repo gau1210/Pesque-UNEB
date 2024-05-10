@@ -5,7 +5,7 @@ from uuid import UUID  # Adicionando a importação da classe UUID
 import csv
 import os
 import Levenshtein
-from itertools import combinations
+from itertools import product
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))
@@ -66,35 +66,26 @@ def autocomplete():
         # Divide o termo em palavras individuais
         search_terms = term.split()
 
-        # Lista para armazenar sugestões
-        suggestions = []
+        # Lista de conectivos
+        connectors = ["de", "ou", "e"]
 
-        # Consulta ao banco de dados por frases que correspondem aos termos inseridos até o momento
-        for i in range(1, len(search_terms) + 1):
-            current_term = ' '.join(search_terms[:i])
-            cur.execute("SELECT word FROM unique_lexeme WHERE word ILIKE %s", ('%' + current_term + '%',))
-            results = cur.fetchall()
-            for result in results:
-                distance = Levenshtein.distance(term.lower(), result[0].lower())
-                suggestions.append({'word': result[0], 'similarity': 1 - distance / max(len(term), len(result[0]))})
+        # Conjunto para armazenar sugestões de frases únicas
+        suggestions_set = set()
 
-        # Verifica sugestões para frases com conectivos
-        if len(search_terms) > 1:
-            for i in range(1, len(search_terms)):
-                phrase = ' '.join(search_terms[i-1:i+1])
-                cur.execute("SELECT word FROM unique_lexeme WHERE word ILIKE %s", ('%' + phrase + '%',))
-                results = cur.fetchall()
-                for result in results:
-                    distance = Levenshtein.distance(term.lower(), result[0].lower())
-                    suggestions.append({'word': result[0], 'similarity': 1 - distance / max(len(term), len(result[0]))})
+        # Forma frases combinando palavras e conectivos
+        for word1, connector, word2 in product(search_terms, connectors, search_terms):
+            if word1 != word2:  # Garante que as palavras sejam diferentes
+                phrase = f"{word1} {connector} {word2}"
+                distance = Levenshtein.distance(term.lower(), phrase.lower())
+                suggestions_set.add((phrase, 1 - distance / max(len(term), len(phrase))))
 
-        # Ordena as sugestões com base na similaridade
-        suggestions = sorted(suggestions, key=lambda x: x['similarity'], reverse=True)
+        # Converte o conjunto para uma lista e ordena as sugestões com base na similaridade
+        suggestions = sorted(suggestions_set, key=lambda x: x[1], reverse=True)
 
-        return jsonify(suggestions=suggestions)
+        return jsonify(suggestions=[{'word': suggestion[0], 'similarity': suggestion[1]} for suggestion in suggestions])
     else:
         return jsonify(suggestions=[])
-    
+
 @app.route("/get_details/<id>")
 def get_details(id):
     try:
