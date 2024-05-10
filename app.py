@@ -171,6 +171,9 @@ def searchdata():
                     csv_filename = 'relatorio.csv'
                     csv_path = os.path.join(app.config['DOWNLOAD_FOLDER'], csv_filename)
 
+                    # Certifique-se de que a pasta de download exista antes de criar o arquivo CSV
+                    os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
+
                     with open(csv_path, "w", newline='', encoding='utf-8') as f:
                         writer = csv.writer(f)
                         writer.writerow(["name", "abstract"]) 
@@ -179,13 +182,12 @@ def searchdata():
 
                     print("Registros encontrados:", numrows)
 
-                    os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
-
+                    # Retorne um JSON com o URL para baixar o arquivo CSV
                     return jsonify({
                         'data': render_template('response.html', employee=employee, numrows=numrows),
-                        'csv_url': url_for('download_csv', filename=csv_filename),
+                        'csv_url': url_for('download_csv', filename=csv_filename)
                     })
-                
+                                    
                 else:
                     if operador == ['or']:
                 
