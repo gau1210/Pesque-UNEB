@@ -56,35 +56,23 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
-@app.route("/autocomplete", methods=["GET"])
+@app.route('/autocomplete', methods=['GET'])
 def autocomplete():
-    term = request.args.get('term')  # Termo parcial fornecido pelo usuário
+    search_term = request.args.get('term')  # Obtém o termo de busca enviado pelo usuário
 
-    if term:
-        cur = conn.cursor()
+    # Divida o termo de busca em palavras individuais
+    search_words = search_term.split()
 
-        # Divide o termo em palavras individuais
-        search_terms = term.split()
+    suggestions = []
 
-        # Lista de conectivos
-        connectors = ["de", "ou", "e"]
+    for word in search_words:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        # Use a função de similaridade pg_trgm para classificar as sugestões por relevância
+        cur.execute("SELECT word, similarity(word, %s) AS relevance FROM unique_lexeme WHERE word ILIKE %s ORDER BY relevance DESC LIMIT 10", (word, '%' + word + '%'))
+        word_suggestions = [row['word'] for row in cur.fetchall()]  # Obtém as sugestões do banco de dados
+        suggestions.extend(word_suggestions)
 
-        # Conjunto para armazenar sugestões de frases únicas
-        suggestions_set = set()
-
-        # Forma frases combinando palavras e conectivos
-        for word1, connector, word2 in product(search_terms, connectors, search_terms):
-            if word1 != word2:  # Garante que as palavras sejam diferentes
-                phrase = f"{word1} {connector} {word2}"
-                distance = Levenshtein.distance(term.lower(), phrase.lower())
-                suggestions_set.add((phrase, 1 - distance / max(len(term), len(phrase))))
-
-        # Converte o conjunto para uma lista e ordena as sugestões com base na similaridade
-        suggestions = sorted(suggestions_set, key=lambda x: x[1], reverse=True)
-
-        return jsonify(suggestions=[{'word': suggestion[0], 'similarity': suggestion[1]} for suggestion in suggestions])
-    else:
-        return jsonify(suggestions=[])
+    return jsonify(suggestions)
 
 @app.route("/get_details/<id>")
 def get_details(id):

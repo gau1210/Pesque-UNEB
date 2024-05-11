@@ -19,7 +19,7 @@
     <input type="submit" value="Buscar" class="search_button" /><br />
     <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex:</b>Sistemas de informação</span>
     </form>
-    <div id="search_suggestions"></div> <!-- Elemento para exibir as sugestões -->
+    <div id="autoCompleteList"></div> <!-- Elemento para exibir as sugestões -->
   </div>
   <div>
     <div id="searchword">Resultados da pesquisa para: <span class="searchword"></span></div>
@@ -30,41 +30,52 @@
 </div>
 <script>
 $(document).ready(function() {
-    // Evento de digitação no campo de busca para autocompletar
-    $("#search_box").keyup(function() {
-        var term = $(this).val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
-        
-        if (term != '') {
-            $.ajax({
-                type: "GET",
-                url: "/autocomplete", // Rota Flask para obter sugestões de autocompletar
-                data: { term: term },
-                cache: false,
-                success: function(response) {
-                    var suggestions = response.suggestions; // Obter sugestões do JSON de resposta
-                    displaySuggestions(suggestions); // Exibir sugestões na interface do usuário
-                }
-            });
-        } else {
-            $("#search_suggestions").empty(); // Limpar a lista de sugestões se o campo de busca estiver vazio
-        }
-    });
-
-    // Função para exibir sugestões na interface do usuário
-    function displaySuggestions(suggestions) {
-        $("#search_suggestions").empty(); // Limpar a lista de sugestões antes de adicionar novas
-        $.each(suggestions, function(index, suggestion) {
-            var word = suggestion.word.replace('.', ''); // Remover ponto da palavra, se presente
-            word = word.trim(); // Remover espaços em branco extras
-            $("#search_suggestions").append("<li><span>" + word + "</span></li>"); // Adicionar sugestões à lista com a tag <span>
-        });
-    }
+    // Array para armazenar todas as seleções
+    var selections = [];
 
     // Evento de clique em uma sugestão
-    $(document).on("click", "#search_suggestions li", function() {
-        var suggestion = $(this).text(); // Obter o texto da sugestão clicada
-        $("#search_box").val(suggestion); // Preencher o campo de busca com a sugestão clicada
-        $("#search_suggestions").empty(); // Limpar a lista de sugestões
+    $("#autoCompleteList").on('click', 'li', function() {
+        var autoCompleteText = $(this).text(); // Obtém o texto da sugestão
+        selections.push(autoCompleteText); // Adiciona a seleção ao array
+
+        // Preenche o campo de busca com todas as seleções
+        $("#search_box").val(selections.join(' '));
+        $("#autoCompleteList").empty(); // Limpa a lista de sugestões
+    });
+
+    // Evento de digitação no campo de busca
+    $("#search_box").on('input', function(e) {
+        var search_word = $(this).val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
+        
+        // Atualiza o atributo placeholder com a sugestão atual
+        $(this).attr('placeholder', 'Ex: ' + search_word);
+        
+        // Verifica se o termo de pesquisa está vazio
+        if (search_word == '') {
+            // Limpa a array de seleções apenas se o campo de busca estiver vazio
+            if (selections.length > 0) {
+                selections = [];
+            }
+            $("#autoCompleteList").empty(); // Limpa a lista de sugestões
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "/autocomplete",
+                data: { term: search_word }, // Envia o termo de pesquisa para o servidor Flask
+                success: function(response) {
+                    var autoCompleteList = $("#autoCompleteList");
+                    autoCompleteList.empty(); // Limpa a lista de sugestões
+
+                    // Adiciona cada sugestão à lista de sugestões
+                    response.forEach(function(suggestion) {
+                        autoCompleteList.append('<li class="list-group-item">' + suggestion + '</li>');
+                    });
+
+                    // Exibe a lista de sugestões
+                    autoCompleteList.show();
+                }
+            });
+        }
     });
 
     // Evento de clique no botão de busca
@@ -122,9 +133,20 @@ $(document).ready(function() {
         }
         return false;
     });
+
+    // Evento de tecla para detectar quando a tecla Backspace é pressionada
+    $("#search_box").on('keydown', function(e) {
+        if (e.keyCode === 8) { // 8 é o código da tecla Backspace
+            // Limpa a array de seleções apenas se o campo de busca estiver vazio
+            if ($(this).val() === '') {
+                selections = [];
+            }
+        }
+    });
 });
+
+
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

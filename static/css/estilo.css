@@ -41,19 +41,19 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
 }
 
 
-#search_suggestions {
+#autoCompleteList{
     display: flex;
     flex-wrap: wrap;
     padding: 5px;
     list-style-type: none; /* Remover marcadores de lista */
 }
 
-#search_suggestions li {
+#autoCompleteList li {
     display: block; /* Alterar para bloco para empilhar as sugestões */
     margin-bottom: 5px; /* Adicionar margem inferior para espaçamento */
 }
 
-#search_suggestions span {
+#autoCompleteList span {
     background-color: #f0f0f0;
     padding: 5px;
     border-radius: 3px;
