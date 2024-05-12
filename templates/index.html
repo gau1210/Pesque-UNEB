@@ -31,72 +31,41 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-    var selections = []; // Array para armazenar todas as seleções
-    var connector = ''; // Variável para armazenar o conectivo digitado pelo usuário
-
     // Evento de clique em uma sugestão
     $("#autoCompleteList").on('click', 'li', function() {
         var autoCompleteText = $(this).text(); // Obtém o texto da sugestão
-        replaceWordBeforeCursor(autoCompleteText); // Substitui o termo antes do cursor pelo texto selecionado
-        selections.push(autoCompleteText); // Adiciona a seleção ao array
+        $("#search_box").val(autoCompleteText); // Substitui o texto da busca pela sugestão selecionada
         $("#autoCompleteList").empty(); // Limpa a lista de sugestões
     });
 
-    // Função para substituir o termo antes do cursor pelo texto selecionado
-    function replaceWordBeforeCursor(text) {
-        var field = $("#search_box")[0]; // Obtém o campo de busca como um elemento DOM
-        var startPos = field.selectionStart; // Obtém a posição inicial do cursor
-        var endPos = field.selectionEnd; // Obtém a posição final do cursor
-        var value = field.value; // Obtém o valor atual do campo de busca
+    // Função para exibir as sugestões
+    function showSuggestions(suggestions) {
+        var autoCompleteList = $("#autoCompleteList");
+        autoCompleteList.empty(); // Limpa a lista de sugestões
 
-        // Encontra o início do termo anterior ao cursor
-        var startOfWord = value.lastIndexOf(' ', startPos - 1);
-        startOfWord = startOfWord === -1 ? 0 : startOfWord + 1; // Trata o caso em que não há espaços antes do cursor
+        // Adiciona cada sugestão à lista de sugestões
+        suggestions.forEach(function(suggestion) {
+            autoCompleteList.append('<li class="list-group-item">' + suggestion + '</li>');
+        });
 
-        // Encontra o final do termo anterior ao cursor
-        var endOfWord = value.indexOf(' ', startPos);
-        endOfWord = endOfWord === -1 ? value.length : endOfWord;
-
-        // Substitui o termo antes do cursor pelo novo texto selecionado
-        var newValue = value.substring(0, startOfWord) + connector + text + value.substring(endOfWord, value.length);
-
-        field.value = newValue; // Atualiza o valor do campo de busca
-        field.focus(); // Coloca o foco de volta no campo de busca
-        field.setSelectionRange(startOfWord + connector.length + text.length, startOfWord + connector.length + text.length); // Define a posição do cursor após a substituição
+        // Exibe a lista de sugestões
+        autoCompleteList.show();
     }
 
     // Evento de digitação no campo de busca
     $("#search_box").on('input', function(e) {
-        var search_word = $(this).val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
-        
-        // Atualiza o atributo placeholder com a sugestão atual
-        $(this).attr('placeholder', 'Ex: ' + search_word);
-        
+        var search_phrase = $(this).val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
+
         // Verifica se o termo de pesquisa está vazio
-        if (search_word == '') {
-            // Limpa a array de seleções apenas se o campo de busca estiver vazio
-            if (selections.length > 0) {
-                selections = [];
-            }
-            $("#autoCompleteList").empty(); // Limpa a lista de sugestões
+        if (search_phrase == '') {
+            $("#autoCompleteList").empty(); // Limpa a lista de sugestões se a busca estiver vazia
         } else {
             $.ajax({
                 type: "GET",
                 url: "/autocomplete",
-                data: { term: search_word }, // Envia o termo de pesquisa para o servidor Flask
+                data: { term: search_phrase }, // Envia a frase de pesquisa para o servidor Flask
                 success: function(response) {
-                    var autoCompleteList = $("#autoCompleteList");
-                    autoCompleteList.empty(); // Limpa a lista de sugestões
-
-                    // Adiciona cada sugestão à lista de sugestões combinada com o conectivo
-                    response.forEach(function(suggestion) {
-                        // Combinar a sugestão com o conectivo digitado pelo usuário
-                        var combinedSuggestion = connector + suggestion;
-                        autoCompleteList.append('<li class="list-group-item">' + combinedSuggestion + '</li>');
-                    });
-
-                    // Exibe a lista de sugestões
-                    autoCompleteList.show();
+                    showSuggestions(response); // Exibe as sugestões retornadas pelo servidor
                 }
             });
         }
@@ -161,9 +130,9 @@ $(document).ready(function() {
     // Evento de tecla para detectar quando a tecla Backspace é pressionada
     $("#search_box").on('keydown', function(e) {
         if (e.keyCode === 8) { // 8 é o código da tecla Backspace
-            // Limpa a array de seleções apenas se o campo de busca estiver vazio
+            // Limpa a lista de seleções apenas se a caixa de busca estiver vazia
             if ($(this).val() === '') {
-                selections = [];
+                $("#autoCompleteList").empty();
             }
         }
     });
@@ -172,4 +141,3 @@ $(document).ready(function() {
 </script>
 </body>
 </html>
-

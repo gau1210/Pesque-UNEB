@@ -4,6 +4,7 @@ import psycopg2.extras
 from uuid import UUID  # Adicionando a importação da classe UUID
 import csv
 import os
+import itertools
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))
@@ -54,23 +55,43 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
+
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
-    search_term = request.args.get('term')  # Obtém o termo de busca enviado pelo usuário
+    search_phrase = request.args.get('term')  # Obtém a frase de busca enviada pelo usuário
 
-    # Divida o termo de busca em palavras individuais
-    search_words = search_term.split()
+    # Divida a frase de busca em palavras individuais
+    search_words = search_phrase.split()
 
+    # Se houver mais de uma palavra na busca, verifique se o usuário forneceu um conectivo
+    if len(search_words) > 1:
+        connector = request.args.get('connector', default=None)  # Obtém o conectivo fornecido pelo usuário
+        if not connector:  # Se nenhum conectivo foi fornecido, use um espaço em branco
+            connector = ' '
+    else:
+        connector = ''  # Se houver apenas uma palavra na busca, não há conectivo
+
+    # Consulta SQL para buscar sugestões para cada palavra individualmente
     suggestions = []
 
     for word in search_words:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        # Use a função de similaridade pg_trgm para classificar as sugestões por relevância
-        cur.execute("SELECT word, similarity(word, %s) AS relevance FROM unique_lexeme WHERE word ILIKE %s ORDER BY relevance DESC LIMIT 10", (word, '%' + word + '%'))
-        word_suggestions = [row['word'] for row in cur.fetchall()]  # Obtém as sugestões do banco de dados
-        suggestions.extend(word_suggestions)
+        # Consulta SQL para buscar sugestões para a palavra atual, ordenadas por relevância
+        query = f"SELECT word, similarity(word, %s) AS relevance FROM unique_lexeme WHERE word ILIKE %s ORDER BY relevance DESC LIMIT 10"
 
-    return jsonify(suggestions)
+        # Execute a consulta
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cur.execute(query, (word, f'%{word}%'))
+        word_suggestions = [row['word'] for row in cur.fetchall()]  # Obtém as sugestões do banco de dados
+
+        suggestions.append(word_suggestions)
+
+    # Combine as sugestões para os dois termos com o conectivo entre eles
+    combined_suggestions = []
+
+    for combo in itertools.product(*suggestions):
+        combined_suggestions.append(connector.join(combo))
+
+    return jsonify(combined_suggestions)
 
 @app.route("/get_details/<id>")
 def get_details(id):
