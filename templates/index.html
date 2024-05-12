@@ -32,6 +32,7 @@
 <script>
 $(document).ready(function() {
     var selections = []; // Array para armazenar todas as seleções
+    var connector = ''; // Variável para armazenar o conectivo digitado pelo usuário
 
     // Evento de clique em uma sugestão
     $("#autoCompleteList").on('click', 'li', function() {
@@ -57,11 +58,11 @@ $(document).ready(function() {
         endOfWord = endOfWord === -1 ? value.length : endOfWord;
 
         // Substitui o termo antes do cursor pelo novo texto selecionado
-        var newValue = value.substring(0, startOfWord) + text + value.substring(endOfWord, value.length);
+        var newValue = value.substring(0, startOfWord) + connector + text + value.substring(endOfWord, value.length);
 
         field.value = newValue; // Atualiza o valor do campo de busca
         field.focus(); // Coloca o foco de volta no campo de busca
-        field.setSelectionRange(startOfWord + text.length, startOfWord + text.length); // Define a posição do cursor após a substituição
+        field.setSelectionRange(startOfWord + connector.length + text.length, startOfWord + connector.length + text.length); // Define a posição do cursor após a substituição
     }
 
     // Evento de digitação no campo de busca
@@ -87,9 +88,11 @@ $(document).ready(function() {
                     var autoCompleteList = $("#autoCompleteList");
                     autoCompleteList.empty(); // Limpa a lista de sugestões
 
-                    // Adiciona cada sugestão à lista de sugestões
+                    // Adiciona cada sugestão à lista de sugestões combinada com o conectivo
                     response.forEach(function(suggestion) {
-                        autoCompleteList.append('<li class="list-group-item">' + suggestion + '</li>');
+                        // Combinar a sugestão com o conectivo digitado pelo usuário
+                        var combinedSuggestion = connector + suggestion;
+                        autoCompleteList.append('<li class="list-group-item">' + combinedSuggestion + '</li>');
                     });
 
                     // Exibe a lista de sugestões
@@ -165,6 +168,7 @@ $(document).ready(function() {
         }
     });
 });
+
 </script>
 </body>
 </html>
