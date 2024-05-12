@@ -4,8 +4,6 @@ import psycopg2.extras
 from uuid import UUID  # Adicionando a importação da classe UUID
 import csv
 import os
-import Levenshtein
-from itertools import product
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))

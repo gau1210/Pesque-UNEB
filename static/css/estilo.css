@@ -41,24 +41,23 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
 }
 
 
-#autoCompleteList{
+#autoCompleteList {
     display: flex;
     flex-wrap: wrap;
     padding: 5px;
-    list-style-type: none; /* Remover marcadores de lista */
+    list-style-type: none;
 }
 
 #autoCompleteList li {
-    display: block; /* Alterar para bloco para empilhar as sugestões */
-    margin-bottom: 5px; /* Adicionar margem inferior para espaçamento */
-}
-
-#autoCompleteList span {
-    background-color: #f0f0f0;
+    display: inline-block;
+    margin-bottom: 5px;
     padding: 5px;
+    border: 1px solid #ccc; /* Adicionando borda sólida */
     border-radius: 3px;
     cursor: pointer;
-    display: inline-block; /* Manter sugestões como elementos em linha */
-    margin-right: 5px; /* Espaçamento entre as sugestões */
-    margin-bottom: 5px; /* Espaçamento entre as linhas de sugestões */
+    margin-right: 5px;
+}
+
+#autoCompleteList li:hover {
+    background-color: #f0f0f0; /* Mudando a cor de fundo ao passar o mouse */
 }
