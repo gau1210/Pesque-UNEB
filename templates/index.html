@@ -32,29 +32,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Evento keyup para detectar quando o usuário digita no campo de busca
-    $("#search_box").on('keyup', function() {
-        var termo = $(this).val().trim(); // Obtém o texto digitado pelo usuário
-        if (termo !== '') {
-            // Envia uma solicitação AJAX para a rota Flask de autocompletar
-            $.ajax({
-                type: "GET",
-                url: "/autocomplete",
-                data: { termo: termo },
-                success: function(response) {
-                    // Limpa as sugestões anteriores
-                    $("#autoCompleteContainer").empty();
-                    // Adiciona as novas sugestões
-                    for (var i = 0; i < response.length; i++) {
-                        $("#autoCompleteContainer").append("<div class='autoCompleteItem'>" + response[i] + "</div>");
-                    }
-                }
-            });
-        } else {
-            // Limpa as sugestões se o campo de busca estiver vazio
-            $("#autoCompleteContainer").empty();
-        }
-    });
     // Evento de clique no botão de busca
     $(".search_button").click(function() {
         var search_word = $("#search_box").val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
