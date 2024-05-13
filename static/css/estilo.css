@@ -40,15 +40,20 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
     position: relative;
 }
 
-#autoCompleteContainer {
-    display: flex;
-    flex-wrap: wrap;
+.autocomplete {
+    margin-top: 5px;
 }
 
-.autoCompleteItem {
-    margin-right: 10px; /* Espaçamento entre as sugestões */
-    background-color: #f5f5f5; /* Cor de fundo das sugestões */
-    padding: 5px 10px; /* Espaçamento interno das sugestões */
-    border: 1px solid #ddd; /* Borda das sugestões */
-    border-radius: 5px; /* Arredondamento das bordas das sugestões */
+.suggestion {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.suggestion:hover {
+    background-color: #e0e0e0;
 }

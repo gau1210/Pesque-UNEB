@@ -19,8 +19,7 @@
     <input type="submit" value="Buscar" class="search_button" /><br />
     <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex:</b>Sistemas de informação</span>
     </form>
-    <!-- Elemento para exibir as sugestões de autocompletar lado a lado -->
-    <div id="autoCompleteContainer"></div>
+    <div id="autoCompleteContainer" class="autocomplete"></div>
   </div>
   <div>
     <div id="searchword">Resultados da pesquisa para: <span class="searchword"></span></div>
@@ -32,6 +31,26 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
+    $("#search_box").keyup(function() {
+        var term = $(this).val().trim();
+        if (term !== '') {
+            $.ajax({
+                type: "GET",
+                url: "/autocomplete",
+                data: { term: term },
+                success: function(response) {
+                    var suggestions = response.suggestions;
+                    var html = '';
+                    for (var i = 0; i < suggestions.length; i++) {
+                        html += '<div class="suggestion">' + suggestions[i] + '</div>';
+                    }
+                    $("#autoCompleteContainer").html(html);
+                }
+            });
+        } else {
+            $("#autoCompleteContainer").html('');
+        }
+    });
     // Evento de clique no botão de busca
     $(".search_button").click(function() {
         var search_word = $("#search_box").val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
