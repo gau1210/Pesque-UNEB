@@ -55,23 +55,6 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
-@app.route("/autocomplete", methods=["GET"])
-def autocomplete():
-    term = request.args.get('term').strip().lower()  # Termo de pesquisa parcial enviado pela solicitação AJAX
-    if term:
-        terms = term.split()  # Dividir o termo de pesquisa em palavras individuais
-        cur = conn.cursor()
-        suggestions = []
-
-        # Para cada palavra no termo de pesquisa, buscar sugestões
-        for t in terms:
-            cur.execute("SELECT word FROM unique_lexeme WHERE lower(word) LIKE %s LIMIT 10", (t + '%',))
-            suggestions.extend([row[0] for row in cur.fetchall()])
-
-        return jsonify(suggestions=suggestions)
-    else:
-        return jsonify(suggestions=[])
-
 @app.route("/get_details/<id>")
 def get_details(id):
     try:
