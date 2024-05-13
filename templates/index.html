@@ -19,7 +19,8 @@
     <input type="submit" value="Buscar" class="search_button" /><br />
     <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex:</b>Sistemas de informação</span>
     </form>
-    <div id="autoCompleteList"></div> <!-- Elemento para exibir as sugestões -->
+    <!-- Elemento para exibir as sugestões de autocompletar lado a lado -->
+    <div id="autoCompleteContainer"></div>
   </div>
   <div>
     <div id="searchword">Resultados da pesquisa para: <span class="searchword"></span></div>
@@ -31,46 +32,29 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Evento de clique em uma sugestão
-    $("#autoCompleteList").on('click', 'li', function() {
-        var autoCompleteText = $(this).text(); // Obtém o texto da sugestão
-        $("#search_box").val(autoCompleteText); // Substitui o texto da busca pela sugestão selecionada
-        $("#autoCompleteList").empty(); // Limpa a lista de sugestões
-    });
-
-    // Função para exibir as sugestões
-    function showSuggestions(suggestions) {
-        var autoCompleteList = $("#autoCompleteList");
-        autoCompleteList.empty(); // Limpa a lista de sugestões
-
-        // Adiciona cada sugestão à lista de sugestões
-        suggestions.forEach(function(suggestion) {
-            autoCompleteList.append('<li class="list-group-item">' + suggestion + '</li>');
-        });
-
-        // Exibe a lista de sugestões
-        autoCompleteList.show();
-    }
-
-    // Evento de digitação no campo de busca
-    $("#search_box").on('input', function(e) {
-        var search_phrase = $(this).val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
-
-        // Verifica se o termo de pesquisa está vazio
-        if (search_phrase == '') {
-            $("#autoCompleteList").empty(); // Limpa a lista de sugestões se a busca estiver vazia
-        } else {
+    // Evento keyup para detectar quando o usuário digita no campo de busca
+    $("#search_box").on('keyup', function() {
+        var termo = $(this).val().trim(); // Obtém o texto digitado pelo usuário
+        if (termo !== '') {
+            // Envia uma solicitação AJAX para a rota Flask de autocompletar
             $.ajax({
                 type: "GET",
                 url: "/autocomplete",
-                data: { term: search_phrase }, // Envia a frase de pesquisa para o servidor Flask
+                data: { termo: termo },
                 success: function(response) {
-                    showSuggestions(response); // Exibe as sugestões retornadas pelo servidor
+                    // Limpa as sugestões anteriores
+                    $("#autoCompleteContainer").empty();
+                    // Adiciona as novas sugestões
+                    for (var i = 0; i < response.length; i++) {
+                        $("#autoCompleteContainer").append("<div class='autoCompleteItem'>" + response[i] + "</div>");
+                    }
                 }
             });
+        } else {
+            // Limpa as sugestões se o campo de busca estiver vazio
+            $("#autoCompleteContainer").empty();
         }
     });
-
     // Evento de clique no botão de busca
     $(".search_button").click(function() {
         var search_word = $("#search_box").val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
@@ -126,18 +110,7 @@ $(document).ready(function() {
         }
         return false;
     });
-
-    // Evento de tecla para detectar quando a tecla Backspace é pressionada
-    $("#search_box").on('keydown', function(e) {
-        if (e.keyCode === 8) { // 8 é o código da tecla Backspace
-            // Limpa a lista de seleções apenas se a caixa de busca estiver vazia
-            if ($(this).val() === '') {
-                $("#autoCompleteList").empty();
-            }
-        }
-    });
 });
-
 </script>
 </body>
 </html>

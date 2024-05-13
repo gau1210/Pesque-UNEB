@@ -55,43 +55,21 @@ def operadoresBoleanos(texto):
 def index():
     return render_template('index.html')
 
-
-@app.route('/autocomplete', methods=['GET'])
+@app.route("/autocomplete", methods=["GET"])
 def autocomplete():
-    search_phrase = request.args.get('term')  # Obtém a frase de busca enviada pelo usuário
+    termo = request.args.get('termo')  # Obtém o termo de busca do parâmetro da URL
+    suggestions = []  # Lista para armazenar sugestões
 
-    # Divida a frase de busca em palavras individuais
-    search_words = search_phrase.split()
+    # Consulta ao banco de dados para buscar sugestões com base no termo
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT word FROM unique_lexeme WHERE word ILIKE %s LIMIT 10", ('%' + termo + '%',))
+    rows = cur.fetchall()
 
-    # Se houver mais de uma palavra na busca, verifique se o usuário forneceu um conectivo
-    if len(search_words) > 1:
-        connector = request.args.get('connector', default=None)  # Obtém o conectivo fornecido pelo usuário
-        if not connector:  # Se nenhum conectivo foi fornecido, use um espaço em branco
-            connector = ' '
-    else:
-        connector = ''  # Se houver apenas uma palavra na busca, não há conectivo
+    # Adiciona as sugestões encontradas à lista
+    for row in rows:
+        suggestions.append(row[0])
 
-    # Consulta SQL para buscar sugestões para cada palavra individualmente
-    suggestions = []
-
-    for word in search_words:
-        # Consulta SQL para buscar sugestões para a palavra atual, ordenadas por relevância
-        query = f"SELECT word, similarity(word, %s) AS relevance FROM unique_lexeme WHERE word ILIKE %s ORDER BY relevance DESC LIMIT 10"
-
-        # Execute a consulta
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute(query, (word, f'%{word}%'))
-        word_suggestions = [row['word'] for row in cur.fetchall()]  # Obtém as sugestões do banco de dados
-
-        suggestions.append(word_suggestions)
-
-    # Combine as sugestões para os dois termos com o conectivo entre eles
-    combined_suggestions = []
-
-    for combo in itertools.product(*suggestions):
-        combined_suggestions.append(connector.join(combo))
-
-    return jsonify(combined_suggestions)
+    return jsonify(suggestions)
 
 @app.route("/get_details/<id>")
 def get_details(id):
