@@ -57,7 +57,7 @@ $(document).ready(function() {
             $.ajax({
                 url: "/autocomplete", 
                 data: { q: query }, 
-                success: function(data) { /
+                success: function(data) { 
                     $("#autoCompleteContainer").empty(); // Limpa o contêiner de sugestões anteriores
                     data.forEach(function(item) { 
                         $("#autoCompleteContainer").append("<div class='autocomplete-suggestion'>" + item + "</div>"); // Adiciona cada sugestão ao contêiner
