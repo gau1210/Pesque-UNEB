@@ -40,20 +40,26 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
     position: relative;
 }
 
-.autocomplete {
-    margin-top: 5px;
-}
-
-.suggestion {
+/* Adiciona estilos para exibir as sugestões lado a lado */
+.autocomplete-suggestion {
     display: inline-block;
     margin-right: 10px;
-    padding: 5px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
 }
 
-.suggestion:hover {
-    background-color: #e0e0e0;
+/* Adiciona estilos para exibir as sugestões lado a lado */
+.autocomplete-suggestion {
+    display: inline-block;
+    margin-right: 10px;
+    border: 1px solid black; /* Adiciona borda de 1px sólida com cor preta */
+    padding: 5px 10px; /* Adiciona preenchimento interno */
+    color: black; /* Define a cor do texto como preto */
+    border-radius: 5px; /* Adiciona bordas arredondadas */
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
 }
+
+/* Estilo para alterar a cor de fundo ao passar o mouse sobre a sugestão */
+.autocomplete-suggestion:hover {
+    background-color: #007bff; /* Altera a cor de fundo ao passar o mouse para azul */
+    color: #ffffff; /* Altera a cor do texto para branco ao passar o mouse */
+}
+

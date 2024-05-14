@@ -4,7 +4,6 @@ import psycopg2.extras
 from uuid import UUID  # Adicionando a importação da classe UUID
 import csv
 import os
-import itertools
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 stop_words = set(stopwords.words('portuguese'))
@@ -54,6 +53,30 @@ def operadoresBoleanos(texto):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    search_query = request.args.get('q', '')
+
+    # Extrair o último termo da consulta
+    last_term = search_query.split()[-1]
+
+    suggestions = []
+
+    if last_term:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        # Remover o último termo da consulta original
+        original_query = ' '.join(search_query.split()[:-1])
+
+        # Buscar sugestões com base no último termo da consulta
+        cur.execute("SELECT word FROM unique_lexeme WHERE word ILIKE %s LIMIT 10;", ('%' + last_term + '%',))
+        db_suggestions = [row['word'] for row in cur.fetchall()]
+
+        # Concatenar o último termo da consulta com cada sugestão do banco de dados
+        suggestions = [original_query + ' ' + suggestion for suggestion in db_suggestions]
+
+    return jsonify(suggestions)
 
 @app.route("/get_details/<id>")
 def get_details(id):
