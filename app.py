@@ -184,7 +184,7 @@ def searchdata():
 
                     print("Registros encontrados:", numrows)
 
-                    # Retorne um JSON com o URL para baixar o arquivo CSV
+                    # Retorna um JSON com o URL para baixar o arquivo CSV
                     return jsonify({
                         'data': render_template('response.html', employee=employee, numrows=numrows),
                         'csv_url': url_for('download_csv', filename=csv_filename)
