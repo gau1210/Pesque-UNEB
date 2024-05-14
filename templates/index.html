@@ -40,7 +40,7 @@
         </button>
       </div>
       <div class="modal-body" id="detailsBody">
-        <!-- Conteúdo dos detalhes será injetado aqui -->
+        <!-- Conteúdo dos detalhes é injetado aqui -->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -48,98 +48,98 @@
     </div>
   </div>
 </div>
-
 <script>
 $(document).ready(function() {
     // Autocomplete
     $("#search_box").on('input', function() {
         var query = $(this).val();
-        if (query.length >= 2) {
+        if (query.length >= 2) { // Verifica se o comprimento da consulta é maior ou igual a 2
             $.ajax({
-                url: "/autocomplete",
-                data: { q: query },
-                success: function(data) {
-                    $("#autoCompleteContainer").empty();
-                    data.forEach(function(item) {
-                        $("#autoCompleteContainer").append("<div class='autocomplete-suggestion'>" + item + "</div>");
+                url: "/autocomplete", 
+                data: { q: query }, 
+                success: function(data) { /
+                    $("#autoCompleteContainer").empty(); // Limpa o contêiner de sugestões anteriores
+                    data.forEach(function(item) { 
+                        $("#autoCompleteContainer").append("<div class='autocomplete-suggestion'>" + item + "</div>"); // Adiciona cada sugestão ao contêiner
                     });
 
-                    $(".autocomplete-suggestion").click(function() {
-                        $("#search_box").val($(this).text());
-                        $("#autoCompleteContainer").empty();
+                    $(".autocomplete-suggestion").click(function() { 
+                        var selectedSuggestion = $(this).text(); 
+                        
+                        $("#search_box").val(selectedSuggestion);
                     });
                 }
             });
         } else {
-            $("#autoCompleteContainer").empty();
+            $("#autoCompleteContainer").empty(); // Limpa o contêiner de sugestões se o comprimento da consulta for menor que 2
         }
     });
 
     // Prevenir submissão do formulário ao pressionar Enter
-    $("#search_box").keypress(function(event) {
-        if (event.which == 13) {
-            event.preventDefault();
-            $(".search_button").click();
+    $("#search_form").keypress(function(event) {
+        if (event.which == 13) { // Verifica se a tecla pressionada é Enter
+            event.preventDefault(); 
+            $(".search_button").click(); 
         }
     });
 
     // Evento de clique no botão de busca
     $("#search_form").submit(function(event) {
-        event.preventDefault(); // Prevenir submissão padrão do formulário
-        
-        var search_word = $("#search_box").val().trim(); // Remove espaços em branco antes e depois do termo de pesquisa
-        var dataString = 'search_word=' + encodeURIComponent(search_word); // Codificar o termo de pesquisa para evitar erros de caracteres especiais
-        
-        if (search_word == '') {
-            // Se a caixa de busca estiver vazia, não faça nada.
+        event.preventDefault(); 
+
+        var search_word = $("#search_box").val().trim(); // Obtém o termo de pesquisa e remove espaços em branco extras
+        var dataString = 'search_word=' + encodeURIComponent(search_word);
+
+        if (search_word == '') { // Verifica se o termo de pesquisa está vazio e se estiver vazi não faz nada.
             return false;
         } else {
             $.ajax({
-                type: "POST",
-                url: "/searchdata",
-                data: dataString,
+                type: "POST", 
+                url: "/searchdata", 
+                data: dataString, 
                 cache: false,
-                beforeSend: function(html) {
+                beforeSend: function(html) { 
                     document.getElementById("insert_search").innerHTML = '';
-                    $("#flash").show();
-                    $("#searchword").show();
-                    $(".searchword").html(search_word);
-                    $("#flash").html('<img src="/static/img/loader.gif" align="absmiddle"> Carregando Resultados...');
+                    $("#flash").show(); 
+                    $("#searchword").show(); 
+                    $(".searchword").html(search_word); 
+                    $("#flash").html('<img src="/static/img/loader.gif" align="absmiddle"> Carregando Resultados...'); // Exibe uma mensagem de carregamento
                 },
-                success: function(html) {
-                    $("#insert_search").show();
-                    $("#insert_search").append(html.data);
-                    // Adiciona o link de download do CSV
+                success: function(html) { 
+                    $("#insert_search").show(); 
+                    $("#insert_search").append(html.data); 
+                    // Adiciona o link de download do CSV se estiver disponível
                     if (html.csv_url) {
                         var downloadButton = '<a href="' + html.csv_url + '" class="btn btn-primary" type="button">Baixar CSV <i class="fa fa-file-csv"></i></a>';
                         $("#insert_search").append(downloadButton);
                     }
-                    $("#flash").hide();
+                    $("#flash").hide(); // Esconde o indicador de carregamento
 
-                    // Evento de clique para cada item da lista de resultados
+                    // Evento de clique para exibir detalhes de cada item
                     $(".show-details").click(function() {
-                        var id = $(this).data('id');
+                        var id = $(this).data('id'); // Obtém o ID do item clicado
+                        
                         $.ajax({
                             type: 'GET',
-                            url: '/get_details/' + id, // Rota Flask para recuperar detalhes do registro
-                            success: function(data) {
-                                $('#detailsBody').html(data);
-                                $('#detailsModal').modal('show'); // Mostrar o modal com os detalhes
+                            url: '/get_details/' + id, 
+                            success: function(data) { 
+                                $('#detailsBody').html(data); 
+                                $('#detailsModal').modal('show'); 
                             },
-                            error: function(xhr, status, error) {
-                                alert('Erro ao recuperar detalhes do registro');
+                            error: function(xhr, status, error) { 
+                                alert('Erro ao recuperar detalhes do registro'); 
                             }
                         });
                     });
 
-                    // Evento de clique para fechar o modal quando o botão de fechar é clicado
+                    // Evento de clique para fechar o modal
                     $('#detailsModal').on('click', '.close', function() {
                         $('#detailsModal').modal('hide'); // Oculta o modal
                     });
                 }
             });
         }
-        return false;
+        return false; 
     });
 });
 </script>

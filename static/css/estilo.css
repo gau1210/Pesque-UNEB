@@ -15,7 +15,7 @@ text-decoration:underline;
  padding:3px; border:solid 1px #666666; width:400px; height:45px; font-size:18px;-moz-border-radius: 6px;-webkit-border-radius: 6px;
 }
 .search_button{
- height:50px;border:#fe6f41 solid 1px; padding-left:9px;padding-right:9px;padding-top:9px;padding-bottom:9px; color:#000; font-weight:bold; font-size:16px;-moz-border-radius: 6px;-webkit-border-radius: 6px;
+ height:50px;border:#e2dedc solid 1px; padding-left:9px;padding-right:9px;padding-top:9px;padding-bottom:9px; color:#000; font-weight:bold; font-size:16px;-moz-border-radius: 6px;-webkit-border-radius: 6px;
 }
 ol.update{
  list-style:none;font-size:1.1em; margin-top:20px;padding-left:0;
@@ -46,16 +46,19 @@ ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
     margin-right: 10px;
 }
 
-/* Adiciona estilos para exibir as sugestões lado a lado */
+/* Adiciona estilos para exibir as sugestões em três colunas */
 .autocomplete-suggestion {
     display: inline-block;
     margin-right: 10px;
-    border: 1px solid black; /* Adiciona borda de 1px sólida com cor preta */
+    margin-bottom: 10px; /* Adiciona margem inferior para espaçamento entre as linhas */
+    width: calc(33.33% - 10px); /* Define a largura de cada sugestão para ocupar um terço da largura disponível com margem direita */
     padding: 5px 10px; /* Adiciona preenchimento interno */
-    color: black; /* Define a cor do texto como preto */
+    border: 1px solid black; /* Adiciona borda de 1px sólida com cor preta */
     border-radius: 5px; /* Adiciona bordas arredondadas */
     cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    box-sizing: border-box; /* Garante que a largura inclua o preenchimento e a borda */
 }
+
 
 /* Estilo para alterar a cor de fundo ao passar o mouse sobre a sugestão */
 .autocomplete-suggestion:hover {

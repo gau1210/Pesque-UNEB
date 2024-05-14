@@ -24,24 +24,28 @@ DB_PASS = "1989"
 
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
 
+# Função para remover pontuações do texto
 def removePontuacao(texto):
     pontuacao = ".,:;!?-"
     for p in pontuacao:
         texto = texto.replace(p, " ")
     return texto
 
+# Função para contar o número de palavras no texto
 def contaPalavras(texto):
     s = removePontuacao(texto)
     lista = s.split()
     print("lista de palvras buscada:", lista)
     return len(lista)
 
+# Função para remover stopwords do texto
 def removeStop(texto):
     palavras = word_tokenize(texto)
     palavras_filtradas = [palavra for palavra in palavras if palavra.lower() not in stop_words]
 
     return palavras_filtradas
 
+# Função para identificar operadores booleanos no texto
 def operadoresBoleanos(texto):
 
     operadores = ["and","or","not"]
@@ -50,10 +54,12 @@ def operadoresBoleanos(texto):
 
     return operadores_boleanos
 
+# Rota para a página inicial
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# Rota para autocompletar sugestões de pesquisa
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     search_query = request.args.get('q', '')
@@ -69,8 +75,9 @@ def autocomplete():
         # Remover o último termo da consulta original
         original_query = ' '.join(search_query.split()[:-1])
 
-        # Buscar sugestões com base no último termo da consulta
-        cur.execute("SELECT word FROM unique_lexeme WHERE word ILIKE %s LIMIT 10;", ('%' + last_term + '%',))
+        # Função similarity() junto com a função <-> para ordenar os resultados pelo operador de distância de trigramas
+        cur.execute("SELECT word FROM unique_lexeme WHERE similarity(word, %s) >= 0.5 ORDER BY word <-> %s;", (last_term, last_term))
+
         db_suggestions = [row['word'] for row in cur.fetchall()]
 
         # Concatenar o último termo da consulta com cada sugestão do banco de dados
@@ -78,6 +85,7 @@ def autocomplete():
 
     return jsonify(suggestions)
 
+# Rota para obter detalhes de um item específico
 @app.route("/get_details/<id>")
 def get_details(id):
     try:
@@ -89,11 +97,13 @@ def get_details(id):
     cur.execute("SELECT * FROM search_index WHERE id = %s", (id,))
     details = cur.fetchone()
     return render_template('details.html', details=details)
-    
+
+# Rota para baixar um arquivo CSV    
 @app.route("/download_csv/<filename>")
 def download_csv(filename):
     return send_from_directory(directory=app.config['DOWNLOAD_FOLDER'], path=filename, as_attachment=True)
 
+# Rota para lidar com a pesquisa de dados
 @app.route("/searchdata", methods=["POST", "GET"])
 def searchdata():
     if request.method == 'POST':
