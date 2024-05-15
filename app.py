@@ -77,7 +77,6 @@ def autocomplete():
 
         # Função similarity() junto com a função <-> para ordenar os resultados pelo operador de distância de trigramas
         cur.execute("SELECT word FROM unique_lexeme WHERE similarity(word, %s) >= 0.5 ORDER BY word <-> %s;", (last_term, last_term))
-        
         db_suggestions = [row['word'] for row in cur.fetchall()]
 
         # Concatenar o último termo da consulta com cada sugestão do banco de dados
