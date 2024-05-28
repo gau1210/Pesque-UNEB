@@ -14,7 +14,9 @@ stop_words = set(stopwords.words('portuguese'))
 
 app = Flask(__name__)
 
-app.config['DOWNLOAD_FOLDER'] = r'C:\caminho\para\seu\diretorio\de\downloads'
+app.config['DOWNLOAD_FOLDER'] = r'C:\Pesque-UNEB\dados'
+
+#app.config['DOWNLOAD_FOLDER'] = r'C:\caminho\para\seu\diretorio\de\downloads'
 
 DB_HOST = "localhost"
 DB_NAME = "postgres"
