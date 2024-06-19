@@ -1,68 +1,117 @@
-body{
-font-family:Arial, Helvetica, sans-serif;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
-a
-{
-color:#DF3D82;
-text-decoration:none
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Garante que o conteúdo principal seja centralizado verticalmente */
+    min-height: 100%;
 }
-a:hover
-{
-color:#DF3D82;
-text-decoration:underline;
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* Faz com que o conteúdo ocupe todo o espaço disponível */
+    padding: 20px; /* Espaçamento interno para o conteúdo */
+    text-align: center; /* Centraliza horizontalmente todo o conteúdo */
 }
-#search_box{
- padding:3px; border:solid 1px #666666; width:400px; height:45px; font-size:18px;-moz-border-radius: 6px;-webkit-border-radius: 6px;
+#search_form {
+    max-width: 500px; /* Define uma largura máxima para o formulário */
+    margin: 0 auto; /* Centraliza o formulário horizontalmente */
 }
-.search_button{
- height:50px;border:#e2dedc solid 1px; padding-left:9px;padding-right:9px;padding-top:9px;padding-bottom:9px; color:#000; font-weight:bold; font-size:16px;-moz-border-radius: 6px;-webkit-border-radius: 6px;
+#search_box {
+    padding: 10px;
+    border: solid 1px #666666;
+    width: 100%; /* Ocupa toda a largura disponível do container */
+    max-width: 400px; /* Largura máxima do campo de busca */
+    height: 45px;
+    font-size: 18px;
+    border-radius: 6px;
+    margin-bottom: 10px; /* Espaçamento opcional entre o campo de busca e o botão */
 }
-ol.update{
- list-style:none;font-size:1.1em; margin-top:20px;padding-left:0;
+a {
+    color: #DF3D82;
+    text-decoration: none;
 }
-#flash{
- margin-top:20px;
- text-align:left;
+a:hover {
+    color: #DF3D82;
+    text-decoration: underline;
 }
-#searchword{
- text-align:left; margin-top:20px; display:none;
- font-family:Arial, Helvetica, sans-serif;
- font-size:16px;
- color:#000;
+#search_box {
+    padding: 3px;
+    border: solid 1px #666666;
+    width: 400px;
+    height: 45px;
+    font-size: 18px;
+    border-radius: 6px;
 }
-.searchword{
- font-weight:bold;
- color:#fe6f41;
+.search_button {
+    height: 50px;
+    border: #e2dedc solid 1px;
+    padding: 9px;
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 6px;
 }
-ol.update li{ border-bottom:#dedede dashed 1px; text-align:left;padding-top:10px;padding-bottom:10px;}
-ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
+ol.update {
+    list-style: none;
+    font-size: 1.1em;
+    margin-top: 20px;
+    padding-left: 0;
+}
+#flash {
+    margin-top: 20px;
+    text-align: left;
+}
+#searchword {
+    text-align: left;
+    margin-top: 20px;
+    display: none;
+    font-size: 16px;
+    color: #000;
+}
+.searchword {
+    font-weight: bold;
+    color: #fe6f41;
+}
+ol.update li {
+    border-bottom: #dedede dashed 1px;
+    text-align: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+ol.update li:first-child {
+    border-top: #dedede dashed 1px;
+    text-align: left;
+}
 .search-container {
     position: relative;
 }
-
-/* Adiciona estilos para exibir as sugestões lado a lado */
 .autocomplete-suggestion {
     display: inline-block;
     margin-right: 10px;
+    margin-bottom: 10px;
+    width: calc(33.33% - 10px);
+    padding: 5px 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+     box-sizing: border-box;
 }
-
-/* Adiciona estilos para exibir as sugestões em três colunas */
-.autocomplete-suggestion {
-    display: inline-block;
-    margin-right: 10px;
-    margin-bottom: 10px; /* Adiciona margem inferior para espaçamento entre as linhas */
-    width: calc(33.33% - 10px); /* Define a largura de cada sugestão para ocupar um terço da largura disponível com margem direita */
-    padding: 5px 10px; /* Adiciona preenchimento interno */
-    border: 1px solid black; /* Adiciona borda de 1px sólida com cor preta */
-    border-radius: 5px; /* Adiciona bordas arredondadas */
-    cursor: pointer; /* Muda o cursor para indicar que é clicável */
-    box-sizing: border-box; /* Garante que a largura inclua o preenchimento e a borda */
-}
-
-
-/* Estilo para alterar a cor de fundo ao passar o mouse sobre a sugestão */
 .autocomplete-suggestion:hover {
-    background-color: #007bff; /* Altera a cor de fundo ao passar o mouse para azul */
-    color: #ffffff; /* Altera a cor do texto para branco ao passar o mouse */
+    background-color: #007bff;
+    color: #ffffff;
 }
-
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: white;
+    color: black;
+    width: 100%;
+}

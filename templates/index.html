@@ -10,44 +10,34 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div align="center">
-  <div style="width:700px">
-    <div style="margin-top:20px; text-align:left">
-      <h1 align="center">PESQUE-UNEB</h1>
-      <form method="post" action="/searchdata" id="search_form">
-        <input type="text" name="search_word" id="search_box" class='search_box' autocomplete="off"/>
-        <input type="submit" value="Buscar" class="search_button btn btn-primary" /><br />
-        <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex:</b> Sistemas de informação Sistema OR informação Sistemas</span>
-      </form>
-      <div id="autoCompleteContainer" class="autocomplete"></div>
+<!-- Imagem e texto -->
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="/">
+      <img src="\static\img\logo.png" width="120" height="120" class="d-inline-block align-top" alt="">
+    </a>
+</nav>
+<div class="content">
+    <div style="width:700px">
+        <div style="margin-top:20px; text-align:left">
+            <form method="post" action="/searchdata" id="search_form">
+                <span style="color:#666666; font-size:24px; font-family:Arial, Helvetica, sans-serif;"> Informe o termo que deseja pesquisar.</span>
+                <input type="text" name="search_word" id="search_box" class='search_box' autocomplete="off"/>
+                <input type="submit" value="Buscar" class="search_button btn btn-primary"/><br />
+                <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Ex:</b> Sistemas de informação Sistemas OR informação Sistemas</span>
+            </form>
+            <div id="autoCompleteContainer" class="autocomplete"></div>
+        </div>
+        <div>
+            <div id="searchword" style="display:none;">Resultados da pesquisa para: <span class="searchword"></span></div>
+            <div id="flash" style="display:none;"></div>
+            <ol id="insert_search" class="update"></ol>
+        </div>
     </div>
-    <div>
-      <div id="searchword" style="display:none;">Resultados da pesquisa para: <span class="searchword"></span></div>
-      <div id="flash" style="display:none;"></div>
-      <ol id="insert_search" class="update"></ol>
-    </div>
-  </div>
 </div>
-
-<!-- Modal para exibir detalhes -->
-<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="detailsModalLabel">Detalhes</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="detailsBody">
-        <!-- Conteúdo dos detalhes é injetado aqui -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
+<footer>
+    <p>Autor: Glauber Santos da Silva<br>
+    <a>gau1210@gmail.com</a></p>
+</footer>
 <script>
 $(document).ready(function() {
     // Autocomplete
