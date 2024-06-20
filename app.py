@@ -74,7 +74,7 @@ def autocomplete():
     if last_term:
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        # Remover o último termo da consulta original
+        # Remove o último termo da consulta original
         original_query = ' '.join(search_query.split()[:-1])
 
         # Função similarity() junto com a função <-> para ordenar os resultados pelo operador de distância de trigramas
