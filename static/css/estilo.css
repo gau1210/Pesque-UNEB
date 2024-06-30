@@ -1,55 +1,59 @@
+/* Define a altura e remove margens e preenchimentos padrão */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif; /* Define a fonte padrão */
 }
 
+/* Configura o corpo para usar flexbox e distribuir o conteúdo verticalmente */
 body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Garante que o conteúdo principal seja centralizado verticalmente */
+    justify-content: space-between;
     min-height: 100%;
 }
 
+/* Centraliza o conteúdo na página */
 .content {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-grow: 1; /* Faz com que o conteúdo ocupe todo o espaço disponível */
-    padding: 20px; /* Espaçamento interno para o conteúdo */
-    text-align: center; /* Centraliza horizontalmente todo o conteúdo */
+    flex-grow: 1;
+    padding: 20px;
+    text-align: center;
 }
+
+/* Estiliza o formulário de busca */
 #search_form {
-    max-width: 500px; /* Define uma largura máxima para o formulário */
-    margin: 0 auto; /* Centraliza o formulário horizontalmente */
+    max-width: 500px; 
+    margin: 0 auto; 
 }
+
+/* Estiliza a caixa de busca */
 #search_box {
     padding: 10px;
     border: solid 1px #666666;
-    width: 100%; /* Ocupa toda a largura disponível do container */
-    max-width: 400px; /* Largura máxima do campo de busca */
+    width: 100%; 
+    max-width: 400px; 
     height: 45px;
     font-size: 18px;
     border-radius: 6px;
-    margin-bottom: 10px; /* Espaçamento opcional entre o campo de busca e o botão */
+    margin-bottom: 10px;
 }
+
+/* Estiliza os links */
 a {
     color: #DF3D82;
     text-decoration: none;
 }
+
 a:hover {
     color: #DF3D82;
     text-decoration: underline;
 }
-#search_box {
-    padding: 3px;
-    border: solid 1px #666666;
-    width: 400px;
-    height: 45px;
-    font-size: 18px;
-    border-radius: 6px;
-}
+
+/* Estiliza o botão de busca */
 .search_button {
     height: 50px;
     border: #e2dedc solid 1px;
@@ -59,16 +63,22 @@ a:hover {
     font-size: 16px;
     border-radius: 6px;
 }
+
+/* Estiliza a lista de atualizações */
 ol.update {
     list-style: none;
     font-size: 1.1em;
     margin-top: 20px;
     padding-left: 0;
 }
+
+/* Estiliza a seção de flash */
 #flash {
     margin-top: 20px;
     text-align: left;
 }
+
+/* Estiliza a palavra de busca */
 #searchword {
     text-align: left;
     margin-top: 20px;
@@ -76,23 +86,31 @@ ol.update {
     font-size: 16px;
     color: #000;
 }
+
 .searchword {
     font-weight: bold;
     color: #fe6f41;
 }
+
+/* Estiliza os itens da lista de atualizações */
 ol.update li {
     border-bottom: #dedede dashed 1px;
     text-align: left;
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
 ol.update li:first-child {
     border-top: #dedede dashed 1px;
     text-align: left;
 }
+
+/* Estiliza o contêiner de busca */
 .search-container {
     position: relative;
 }
+
+/* Estiliza as sugestões de autocompletar */
 .autocomplete-suggestion {
     display: inline-block;
     margin-right: 10px;
@@ -102,12 +120,15 @@ ol.update li:first-child {
     border: 1px solid black;
     border-radius: 5px;
     cursor: pointer;
-     box-sizing: border-box;
+    box-sizing: border-box;
 }
+
 .autocomplete-suggestion:hover {
     background-color: #007bff;
     color: #ffffff;
 }
+
+/* Estiliza o rodapé */
 footer {
     text-align: center;
     padding: 10px;
